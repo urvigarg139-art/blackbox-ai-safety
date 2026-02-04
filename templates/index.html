@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+
+<!-- Mobile support -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>BlackBox AI Safety Auditor</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background:#f4f6f9;
+    margin:0;
+    padding:0;
+}
+
+.container {
+    max-width:900px;
+    margin:auto;
+    padding:20px;
+}
+
+.card {
+    background:white;
+    padding:20px;
+    border-radius:10px;
+    box-shadow:0 0 10px rgba(0,0,0,0.1);
+    margin-bottom:20px;
+}
+
+button {
+    background:#e63946;
+    color:white;
+    border:none;
+    padding:12px 25px;
+    font-size:16px;
+    border-radius:6px;
+    cursor:pointer;
+}
+
+button:hover {
+    background:#c92b38;
+}
+
+img {
+    max-width:100%;
+    border-radius:6px;
+}
+
+h1 {
+    text-align:center;
+}
+
+.footer {
+    text-align:center;
+    margin-top:40px;
+    font-size:14px;
+    color:gray;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>🛡 BlackBox AI Exploit Detection Dashboard</h1>
+
+<div class="card">
+<b>Status:</b> Ready <br><br>
+
+<form action="/run" method="post">
+<button>Run Safety Audit</button>
+</form>
+</div>
+
+<div class="card">
+<h2>📈 Training Performance</h2>
+<img src="/static/training.png">
+</div>
+
+<div class="card">
+<h2>🌍 Sustainable Development Goals</h2>
+
+<p>
+This system supports <b>UN SDG-9 (Industry, Innovation & Infrastructure)</b> and
+<b>SDG-16 (Peace, Justice & Strong Institutions)</b> by automatically auditing AI models
+for exploitative behavior, improving trust in autonomous systems.
+</p>
+</div>
+
+<div class="card">
+<h2>Outputs</h2>
+
+<ul>
+<li>Exploit Locations (Terminal)</li>
+<li>Training Scores (logs)</li>
+<li>Risk Behavior Detection</li>
+</ul>
+</div>
+
+<div class="footer">
+BlackBox AI Safety Auditor © 2026<br>
+Research Prototype
+</div>
+
+</div>
+
+</body>
+</html>
+
+
+
