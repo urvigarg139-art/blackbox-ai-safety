@@ -1,116 +1,83 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<title>BlackBox AI Exploit Detection Dashboard</title>
+<title>BlackBox AI Safety</title>
 
 <style>
-body {
-    font-family: Arial, sans-serif;
-    background:#f4f7fb;
-    margin:0;
-    padding:40px;
+body{
+font-family:Arial;
+background:#f4f6f9;
+padding:30px;
 }
 
-.container {
-    max-width:900px;
-    margin:auto;
+.card{
+background:white;
+padding:25px;
+border-radius:12px;
+margin-bottom:20px;
+box-shadow:0px 4px 10px rgba(0,0,0,.1);
 }
 
-.card {
-    background:white;
-    padding:25px;
-    margin-bottom:25px;
-    border-radius:12px;
-    box-shadow:0 4px 12px rgba(0,0,0,0.1);
+button{
+padding:12px 25px;
+border:none;
+background:#e63946;
+color:white;
+font-size:16px;
+border-radius:8px;
+cursor:pointer;
 }
 
-h1 {
-    text-align:center;
-}
-
-button {
-    background:#e63946;
-    color:white;
-    border:none;
-    padding:12px 20px;
-    border-radius:6px;
-    font-size:16px;
-    cursor:pointer;
-}
-
-button:hover {
-    background:#d62839;
-}
-
-pre {
-    background:black;
-    color:#00ff00;
-    padding:15px;
-    border-radius:6px;
-    min-height:120px;
+#output{
+background:black;
+color:lime;
+padding:15px;
+height:200px;
+overflow:auto;
 }
 </style>
+
 </head>
 
 <body>
 
-<div class="container">
-
-<h1>🛡 BlackBox AI Exploit Detection Dashboard</h1>
+<h1>🛡 BlackBox AI Exploit Detection</h1>
 
 <div class="card">
-<b>Status:</b> Ready<br><br>
 <button onclick="runAudit()">Run Safety Audit</button>
 </div>
 
 <div class="card">
 <h3>Audit Output</h3>
-<pre id="output">Waiting...</pre>
+<div id="output">Waiting...</div>
 </div>
 
 <div class="card">
-<h3>🌍 Sustainable Development Goals</h3>
-
-Supports:
-
-<ul>
-<li>SDG-9 — Industry, Innovation & Infrastructure</li>
-<li>SDG-16 — Peace, Justice & Strong Institutions</li>
-</ul>
-
-<p>
-This system audits AI models for exploitative behaviour, improving trust in autonomous systems for law enforcement and public safety platforms.
-</p>
-
-</div>
-
+<h3>SDG Impact</h3>
+SDG-9 Industry Innovation<br>
+SDG-16 Peace & Justice
 </div>
 
 <script>
-
 function runAudit(){
-
-document.getElementById("output").innerText="Running audit...";
-
-fetch("/run_audit",{method:"POST"})
-.then(res=>res.json())
+fetch("/audit",{method:"POST"})
+.then(r=>r.json())
 .then(data=>{
-
-document.getElementById("output").innerText =
-data.results.join("\n");
-
-})
-.catch(err=>{
-document.getElementById("output").innerText="Error running audit";
+document.getElementById("output").innerHTML=
+`
+Risk Score: ${data.risk}% (${data.severity})<br>
+Findings:<br>
+${data.findings.join("<br>")}
+<br><br>
+Exploit Location: ${data.location}
+`;
 });
-
 }
-
 </script>
 
 </body>
 </html>
+
 
 
 

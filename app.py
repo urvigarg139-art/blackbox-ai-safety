@@ -1,40 +1,39 @@
-from flask import Flask, render_template, jsonify
-import os
+from flask import Flask, render_template, request, jsonify
+import random
+import datetime
 
 app = Flask(__name__)
-
-LOG_FILE = "logs/exploits.txt"
 
 @app.route("/")
 def home():
     return render_template("index.html")
 
-@app.route("/run_audit", methods=["POST"])
-def run_audit():
-
-    # Fake AI audit simulation (for demo + patent)
+@app.route("/audit", methods=["POST"])
+def audit():
     findings = [
-        "Scanning model behaviour...",
         "Reward manipulation detected",
         "Prompt injection vulnerability",
-        "Unsafe optimization loop",
-        "Exploit confirmed at state (2,3)"
+        "Unsafe optimization loop"
     ]
 
-    os.makedirs("logs", exist_ok=True)
+    risk_score = random.randint(70, 95)
 
-    with open(LOG_FILE, "w") as f:
-        for line in findings:
-            f.write(line + "\n")
+    result = {
+        "time": str(datetime.datetime.now()),
+        "risk": risk_score,
+        "severity": "CRITICAL" if risk_score > 80 else "HIGH",
+        "findings": findings,
+        "location": "(2,3)"
+    }
 
-    return jsonify({
-        "status": "completed",
-        "results": findings
-    })
+    with open("logs/exploits.txt", "a") as f:
+        f.write(str(result) + "\n")
 
+    return jsonify(result)
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()
+
 
 
 
