@@ -1,54 +1,44 @@
-from flask import Flask, render_template, redirect, request
-import subprocess
+from flask import Flask, render_template, jsonify, request
 import os
+import subprocess
 from datetime import datetime
 
 app = Flask(__name__)
 
-LOG_FILE = "logs/training_log.txt"
-EXPLOIT_FILE = "logs/exploits.txt"
+LOG_DIR = "logs"
+EXPLOIT_FILE = os.path.join(LOG_DIR, "exploits.txt")
+
+os.makedirs(LOG_DIR, exist_ok=True)
 
 
-@app.route("/", methods=["GET"])
+@app.route("/")
 def home():
-    exploits = []
-    scores = []
-
-    if os.path.exists(EXPLOIT_FILE):
-        with open(EXPLOIT_FILE) as f:
-            exploits = f.readlines()
-
-    if os.path.exists(LOG_FILE):
-        with open(LOG_FILE) as f:
-            scores = f.readlines()
-
-    return render_template(
-        "index.html",
-        exploits=exploits,
-        scores=scores
-    )
+    return render_template("index.html")
 
 
-# ✅ IMPORTANT FIX: allow POST
+# ✅ IMPORTANT: allow POST
 @app.route("/run", methods=["POST"])
 def run_audit():
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-    # Clear previous logs
-    open(LOG_FILE, "w").close()
-    open(EXPLOIT_FILE, "w").close()
+    try:
+        # Run your ML system
+        subprocess.run(["python", "main.py"], check=True)
 
-    # Run AI safety audit
-    subprocess.call(["python", "main.py"])
+        # Read exploit file if exists
+        exploits = []
+        if os.path.exists(EXPLOIT_FILE):
+            with open(EXPLOIT_FILE, "r") as f:
+                exploits = f.readlines()
 
-    return redirect("/")
+        return jsonify({
+            "status": "completed",
+            "time": timestamp,
+            "exploits": exploits[-10:]
+        })
 
-
-@app.route("/health")
-def health():
-    return {
-        "status": "online",
-        "timestamp": str(datetime.now())
-    }
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)})
 
 
 if __name__ == "__main__":
