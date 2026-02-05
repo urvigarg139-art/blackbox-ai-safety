@@ -65,11 +65,15 @@ fetch("/audit",{method:"POST"})
 .then(data=>{
 document.getElementById("output").innerHTML=
 `
-Risk Score: ${data.risk}% (${data.severity})<br>
-Findings:<br>
-${data.findings.join("<br>")}
-<br><br>
-Exploit Location: ${data.location}
+<b>Incident ID:</b> AI-${Date.now()}<br><br>
+
+<b>Risk Score:</b> ${data.risk}%  
+<b>Status:</b> ${data.severity}<br><br>
+
+<b>Threats Detected:</b><br>
+${data.findings.join("<br>")}<br><br>
+
+<b>Exploit Location:</b> ${data.location}
 `;
 });
 }
