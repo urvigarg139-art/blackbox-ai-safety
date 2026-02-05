@@ -1,38 +1,75 @@
-from flask import Flask, render_template, request, jsonify
-import random
-import datetime
+from flask import Flask, render_template, jsonify, request
+import os
+from datetime import datetime
 
 app = Flask(__name__)
 
+# Ensure logs folder exists
+os.makedirs("logs", exist_ok=True)
+
 @app.route("/")
-def home():
+def index():
     return render_template("index.html")
 
-@app.route("/audit", methods=["POST"])
-def audit():
+
+@app.route("/run_audit", methods=["POST"])
+def run_audit():
+
+    # Simulated AI exploit detection
+    risk = 82
+    severity = "CRITICAL"
+
     findings = [
         "Reward manipulation detected",
         "Prompt injection vulnerability",
         "Unsafe optimization loop"
     ]
 
-    risk_score = random.randint(70, 95)
+    location = "(2,3)"
 
-    result = {
-        "time": str(datetime.datetime.now()),
-        "risk": risk_score,
-        "severity": "CRITICAL" if risk_score > 80 else "HIGH",
-        "findings": findings,
-        "location": "(2,3)"
-    }
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
+    # Incident Report
+    report = f"""
+AI SAFETY INCIDENT REPORT
+------------------------
+Time: {timestamp}
+
+Risk Score: {risk}%
+Severity: {severity}
+
+Findings:
+- Reward manipulation
+- Prompt injection
+- Unsafe optimization loop
+
+Exploit Location: {location}
+
+Recommended Action:
+Immediate shutdown and model retraining.
+
+========================================
+"""
+
+    # Save forensic report
+    with open("logs/incident_report.txt", "a") as f:
+        f.write(report)
+
+    # Save exploit log
     with open("logs/exploits.txt", "a") as f:
-        f.write(str(result) + "\n")
+        f.write(f"{timestamp} | Exploit at {location}\n")
 
-    return jsonify(result)
+    return jsonify({
+        "risk": risk,
+        "severity": severity,
+        "findings": findings,
+        "location": location
+    })
+
 
 if __name__ == "__main__":
-    app.run()
+    app.run(host="0.0.0.0", port=5000)
+
 
 
 

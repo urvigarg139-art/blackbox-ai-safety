@@ -1,45 +1,64 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>BlackBox AI Safety</title>
+<meta charset="UTF-8">
+<title>BlackBox AI Exploit Detection Dashboard</title>
 
 <style>
-body{
-font-family:Arial;
-background:#f4f6f9;
-padding:30px;
+body {
+    font-family: Arial;
+    background: #f4f6f8;
+    margin: 0;
 }
 
-.card{
-background:white;
-padding:25px;
-border-radius:12px;
-margin-bottom:20px;
-box-shadow:0px 4px 10px rgba(0,0,0,.1);
+.container {
+    width: 85%;
+    margin: auto;
+    padding-top: 40px;
 }
 
-button{
-padding:12px 25px;
-border:none;
-background:#e63946;
-color:white;
-font-size:16px;
-border-radius:8px;
-cursor:pointer;
+h1 {
+    text-align: center;
 }
 
-#output{
-background:black;
-color:lime;
-padding:15px;
-height:200px;
-overflow:auto;
+.card {
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    margin-bottom: 30px;
+    box-shadow: 0 0 10px rgba(0,0,0,.1);
+}
+
+button {
+    background: #e63946;
+    color: white;
+    border: none;
+    padding: 14px 30px;
+    font-size: 18px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+button:hover {
+    opacity: .9;
+}
+
+#output {
+    background: black;
+    color: #00ff00;
+    padding: 20px;
+    border-radius: 8px;
+    min-height: 200px;
+    white-space: pre-wrap;
+    font-family: monospace;
 }
 </style>
 
 </head>
 
 <body>
+
+<div class="container">
 
 <h1>🛡 BlackBox AI Exploit Detection</h1>
 
@@ -48,39 +67,54 @@ overflow:auto;
 </div>
 
 <div class="card">
-<h3>Audit Output</h3>
-<div id="output">Waiting...</div>
+<h2>Audit Output</h2>
+<div id="output">Idle...</div>
 </div>
 
 <div class="card">
-<h3>SDG Impact</h3>
-SDG-9 Industry Innovation<br>
-SDG-16 Peace & Justice
+<h2>Supported SDGs</h2>
+<ul>
+<li>SDG-9 Industry Innovation Infrastructure</li>
+<li>SDG-16 Peace Justice Strong Institutions</li>
+</ul>
+</div>
+
 </div>
 
 <script>
-function runAudit(){
-fetch("/audit",{method:"POST"})
-.then(r=>r.json())
-.then(data=>{
-document.getElementById("output").innerHTML=
-`
-<b>Incident ID:</b> AI-${Date.now()}<br><br>
+function runAudit() {
 
-<b>Risk Score:</b> ${data.risk}%  
-<b>Status:</b> ${data.severity}<br><br>
+    document.getElementById("output").innerText = "Running audit...\n";
 
-<b>Threats Detected:</b><br>
-${data.findings.join("<br>")}<br><br>
+    fetch("/run_audit", {
+        method: "POST"
+    })
+    .then(res => res.json())
+    .then(data => {
 
-<b>Exploit Location:</b> ${data.location}
+        let text =
+`Risk Score: ${data.risk}% (${data.severity})
+
+Findings:
 `;
-});
+
+        data.findings.forEach(f => {
+            text += "- " + f + "\n";
+        });
+
+        text += "\nExploit Location: " + data.location;
+
+        document.getElementById("output").innerText = text;
+    })
+    .catch(err => {
+        document.getElementById("output").innerText = "ERROR connecting server";
+    });
 }
 </script>
 
 </body>
 </html>
+
 
 
 
