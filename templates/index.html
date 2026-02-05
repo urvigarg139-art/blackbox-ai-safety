@@ -73,30 +73,27 @@
 </div>
 
 <script>
-function runAudit() {
-    document.getElementById("output").innerText = "Running audit...";
 
-    fetch("/run", {
-        method: "POST"
-    })
-    .then(res => res.json())
-    .then(data => {
-        let text = "Status: " + data.status + "\nTime: " + data.time + "\n\n";
+function runAudit(){
 
-        if (data.exploits && data.exploits.length > 0) {
-            text += "Recent Exploits:\n";
-            data.exploits.forEach(e => text += e);
-        } else {
-            text += "No exploits detected.";
-        }
+document.getElementById("status").innerText="Running audit...";
 
-        document.getElementById("output").innerText = text;
-    })
-    .catch(err => {
-        document.getElementById("output").innerText = "Error: " + err;
-    });
+fetch("/run",{method:"POST"})
+.then(r=>r.json())
+.then(data=>{
+
+document.getElementById("status").innerHTML=
+"Status: "+data.status+
+"<br>Time: "+data.time+
+"<br><b>Risk Score:</b> "+data.risk;
+
+document.getElementById("logs").innerText=data.exploits.join("");
+
+});
 }
+
 </script>
+
 
 </body>
 </html>
