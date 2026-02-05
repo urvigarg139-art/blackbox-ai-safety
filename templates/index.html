@@ -1,102 +1,102 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>BlackBox AI Exploit Detection Dashboard</title>
+<title>BlackBox AI Exploit Detection</title>
 
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f5f7fb;
-            margin: 0;
-            padding: 40px;
-        }
+<style>
+body {
+    font-family: Arial;
+    background: #f5f7fa;
+}
 
-        h1 {
-            text-align: center;
-        }
+.container {
+    width: 80%;
+    margin: auto;
+}
 
-        .card {
-            background: white;
-            padding: 25px;
-            border-radius: 10px;
-            margin: 20px auto;
-            max-width: 800px;
-            box-shadow: 0 4px 10px rgba(0,0,0,.08);
-        }
+.card {
+    background: white;
+    padding: 25px;
+    margin-top: 30px;
+    border-radius: 12px;
+}
 
-        button {
-            background: #e63946;
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            font-size: 16px;
-            border-radius: 6px;
-            cursor: pointer;
-        }
+button {
+    background: #e63946;
+    color: white;
+    border: none;
+    padding: 15px 25px;
+    border-radius: 8px;
+    cursor: pointer;
+}
 
-        button:hover {
-            opacity: .9;
-        }
+#output {
+    background: black;
+    color: #00ff00;
+    padding: 15px;
+    margin-top: 20px;
+    min-height: 80px;
+    font-family: monospace;
+}
+</style>
 
-        pre {
-            background: #111;
-            color: #0f0;
-            padding: 15px;
-            border-radius: 6px;
-            overflow-x: auto;
-        }
-    </style>
 </head>
 
 <body>
 
+<div class="container">
+
 <h1>🛡 BlackBox AI Exploit Detection Dashboard</h1>
 
 <div class="card">
-    <b>Status:</b> Ready<br><br>
-    <button onclick="runAudit()">Run Safety Audit</button>
+<b>Status:</b> Ready<br><br>
+<button onclick="runAudit()">Run Safety Audit</button>
 </div>
 
 <div class="card">
-    <h3>Audit Output</h3>
-    <pre id="output">Waiting…</pre>
+<h3>Audit Output</h3>
+<div id="output">Waiting...</div>
 </div>
 
 <div class="card">
-    <h3>🌍 Sustainable Development Goals</h3>
-    <p>
-        Supports:
-        <br>• SDG-9 (Industry, Innovation & Infrastructure)
-        <br>• SDG-16 (Peace, Justice & Strong Institutions)
-    </p>
+<h3>🌍 Sustainable Development Goals</h3>
+SDG-9 Industry Innovation<br>
+SDG-16 Peace & Justice
+</div>
+
 </div>
 
 <script>
 
-function runAudit(){
+function runAudit() {
 
-document.getElementById("status").innerText="Running audit...";
+document.getElementById("output").innerHTML = "Running audit...";
 
-fetch("/run",{method:"POST"})
-.then(r=>r.json())
-.then(data=>{
+fetch("/run", { method: "POST" })
+.then(r => r.json())
+.then(data => {
 
-document.getElementById("status").innerHTML=
-"Status: "+data.status+
-"<br>Time: "+data.time+
-"<br><b>Risk Score:</b> "+data.risk;
+let text = "";
 
-document.getElementById("logs").innerText=data.exploits.join("");
+if(data.exploits.length == 0){
+    text = "✅ No exploits detected";
+} else {
+    data.exploits.forEach(e => text += e + "<br>");
+}
+
+text += "<br><b>Risk Score:</b> " + data.risk;
+
+document.getElementById("output").innerHTML = text;
 
 });
+
 }
 
 </script>
 
-
 </body>
 </html>
+
 
 
 
