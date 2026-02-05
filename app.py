@@ -1,7 +1,7 @@
 from flask import Flask, render_template, jsonify
 import subprocess
-import datetime
 import os
+import time
 
 app = Flask(__name__)
 
@@ -12,8 +12,10 @@ def home():
 @app.route("/run", methods=["POST"])
 def run_audit():
 
-    # Run your AI audit
-    subprocess.Popen(["python", "main.py"])
+    # Run audit and wait
+    subprocess.call(["python", "main.py"])
+
+    time.sleep(1)
 
     exploits = []
 
@@ -21,16 +23,13 @@ def run_audit():
         with open("logs/exploits.txt") as f:
             exploits = f.readlines()
 
-    risk = len(exploits)
-
     return jsonify({
-        "status": "Audit Running",
-        "time": datetime.datetime.now().strftime("%H:%M:%S"),
-        "risk": risk,
-        "exploits": exploits
+        "exploits": exploits,
+        "risk": len(exploits)
     })
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
+
 
 
