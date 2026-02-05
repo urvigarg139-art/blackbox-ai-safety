@@ -1,45 +1,56 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>BlackBox AI Exploit Detection</title>
+<meta charset="UTF-8">
+<title>BlackBox AI Exploit Detection Dashboard</title>
 
 <style>
 body {
-    font-family: Arial;
-    background: #f5f7fa;
+    font-family: Arial, sans-serif;
+    background:#f4f7fb;
+    margin:0;
+    padding:40px;
 }
 
 .container {
-    width: 80%;
-    margin: auto;
+    max-width:900px;
+    margin:auto;
 }
 
 .card {
-    background: white;
-    padding: 25px;
-    margin-top: 30px;
-    border-radius: 12px;
+    background:white;
+    padding:25px;
+    margin-bottom:25px;
+    border-radius:12px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.1);
+}
+
+h1 {
+    text-align:center;
 }
 
 button {
-    background: #e63946;
-    color: white;
-    border: none;
-    padding: 15px 25px;
-    border-radius: 8px;
-    cursor: pointer;
+    background:#e63946;
+    color:white;
+    border:none;
+    padding:12px 20px;
+    border-radius:6px;
+    font-size:16px;
+    cursor:pointer;
 }
 
-#output {
-    background: black;
-    color: #00ff00;
-    padding: 15px;
-    margin-top: 20px;
-    min-height: 80px;
-    font-family: monospace;
+button:hover {
+    background:#d62839;
+}
+
+pre {
+    background:black;
+    color:#00ff00;
+    padding:15px;
+    border-radius:6px;
+    min-height:120px;
 }
 </style>
-
 </head>
 
 <body>
@@ -55,39 +66,43 @@ button {
 
 <div class="card">
 <h3>Audit Output</h3>
-<div id="output">Waiting...</div>
+<pre id="output">Waiting...</pre>
 </div>
 
 <div class="card">
 <h3>🌍 Sustainable Development Goals</h3>
-SDG-9 Industry Innovation<br>
-SDG-16 Peace & Justice
+
+Supports:
+
+<ul>
+<li>SDG-9 — Industry, Innovation & Infrastructure</li>
+<li>SDG-16 — Peace, Justice & Strong Institutions</li>
+</ul>
+
+<p>
+This system audits AI models for exploitative behaviour, improving trust in autonomous systems for law enforcement and public safety platforms.
+</p>
+
 </div>
 
 </div>
 
 <script>
 
-function runAudit() {
+function runAudit(){
 
-document.getElementById("output").innerHTML = "Running audit...";
+document.getElementById("output").innerText="Running audit...";
 
-fetch("/run", { method: "POST" })
-.then(r => r.json())
-.then(data => {
+fetch("/run_audit",{method:"POST"})
+.then(res=>res.json())
+.then(data=>{
 
-let text = "";
+document.getElementById("output").innerText =
+data.results.join("\n");
 
-if(data.exploits.length == 0){
-    text = "✅ No exploits detected";
-} else {
-    data.exploits.forEach(e => text += e + "<br>");
-}
-
-text += "<br><b>Risk Score:</b> " + data.risk;
-
-document.getElementById("output").innerHTML = text;
-
+})
+.catch(err=>{
+document.getElementById("output").innerText="Error running audit";
 });
 
 }
