@@ -1,130 +1,107 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<title>BlackBox AI Exploit Detection Dashboard</title>
+<title>BlackBox AI Safety System</title>
 
 <style>
 body {
-    font-family: Arial;
-    background: #f4f6f8;
-    margin: 0;
-}
-
-.container {
-    width: 85%;
-    margin: auto;
-    padding-top: 40px;
-}
-
-h1 {
-    text-align: center;
+font-family: Arial;
+background:#f4f6f8;
+padding:30px;
 }
 
 .card {
-    background: white;
-    padding: 25px;
-    border-radius: 10px;
-    margin-bottom: 30px;
-    box-shadow: 0 0 10px rgba(0,0,0,.1);
+background:white;
+padding:25px;
+border-radius:10px;
+margin-bottom:20px;
+box-shadow:0 0 10px rgba(0,0,0,0.1);
 }
 
 button {
-    background: #e63946;
-    color: white;
-    border: none;
-    padding: 14px 30px;
-    font-size: 18px;
-    border-radius: 6px;
-    cursor: pointer;
+background:red;
+color:white;
+border:none;
+padding:12px 20px;
+border-radius:6px;
+cursor:pointer;
+font-size:16px;
 }
 
-button:hover {
-    opacity: .9;
+pre {
+background:black;
+color:lime;
+padding:15px;
+border-radius:6px;
 }
 
-#output {
-    background: black;
-    color: #00ff00;
-    padding: 20px;
-    border-radius: 8px;
-    min-height: 200px;
-    white-space: pre-wrap;
-    font-family: monospace;
+.badge {
+padding:6px 12px;
+border-radius:6px;
+color:white;
+font-weight:bold;
 }
+
+.critical { background:red; }
+.high { background:orange; }
+.low { background:green; }
 </style>
+
 </head>
 
 <body>
 
-<div class="container">
-
-<h1>🛡 BlackBox AI Exploit Detection</h1>
+<h1>🛡 BlackBox AI Threat Detection System</h1>
 
 <div class="card">
 <button onclick="runAudit()">Run Safety Audit</button>
-
-<br><br>
-
-<a href="/download">
-<button>Download Incident Report</button>
-</a>
+<a href="/download"><button>Download Incident Report</button></a>
 </div>
 
 <div class="card">
-<h2>Audit Output</h2>
-<div id="output">Idle...</div>
+<h2>Audit Result</h2>
+
+<div id="summary"></div>
+
+<pre id="output">Waiting...</pre>
 </div>
 
 <div class="card">
-<h2>Supported SDGs</h2>
+<h2>Operational Use</h2>
 <ul>
-<li>SDG-9 Industry Innovation Infrastructure</li>
-<li>SDG-16 Peace Justice Strong Institutions</li>
+<li>Police Cyber Cells</li>
+<li>Airport Surveillance AI</li>
+<li>Defense AI Monitoring</li>
+<li>Critical Infrastructure</li>
 </ul>
 </div>
 
-</div>
-
 <script>
-function runAudit() {
 
-    document.getElementById("output").innerText = "Running audit...\n";
+function runAudit(){
 
-    fetch("/run_audit", {
-        method: "POST"
-    })
-    .then(res => res.json())
-    .then(data => {
+fetch("/run_audit",{method:"POST"})
+.then(res=>res.json())
+.then(data=>{
 
-        let text =
-`Case ID: ${data.case_id}
-
-Risk Score: ${data.risk}% (${data.severity})
-
-Findings:
+document.getElementById("summary").innerHTML=`
+<b>Case ID:</b> ${data.case_id}<br>
+<b>Risk Score:</b> ${data.risk}% <span class="badge critical">${data.severity}</span><br>
+<b>Exploit Location:</b> ${data.location}<br>
 `;
 
-        data.findings.forEach(f => {
-            text += "- " + f + "\n";
-        });
+document.getElementById("output").innerText =
+"Threats Detected:\n"+
+data.findings.join("\n");
 
-        text += "\nExploit Location: " + data.location;
-
-        let box = document.getElementById("output");
-        box.innerText = text;
-
-        // Threat color
-        box.style.color = data.severity == "CRITICAL" ? "red" : "#00ff00";
-    })
-    .catch(err => {
-        document.getElementById("output").innerText = "ERROR connecting server";
-    });
+});
 }
+
 </script>
 
 </body>
 </html>
+
 
 
 
