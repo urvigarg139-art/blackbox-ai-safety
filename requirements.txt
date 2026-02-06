@@ -1,4 +1,8 @@
 flask
 gunicorn
+matplotlib
+numpy
+fpdf
+
 
 
