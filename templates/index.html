@@ -1,52 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>BlackBox AI Safety System</title>
-
+<title>BlackBox AI Threat Detection</title>
 <style>
-body {
-font-family: Arial;
-background:#f4f6f8;
-padding:30px;
-}
-
-.card {
-background:white;
-padding:25px;
-border-radius:10px;
-margin-bottom:20px;
-box-shadow:0 0 10px rgba(0,0,0,0.1);
-}
-
-button {
-background:red;
-color:white;
-border:none;
-padding:12px 20px;
-border-radius:6px;
-cursor:pointer;
-font-size:16px;
-}
-
-pre {
-background:black;
-color:lime;
-padding:15px;
-border-radius:6px;
-}
-
-.badge {
-padding:6px 12px;
-border-radius:6px;
-color:white;
-font-weight:bold;
-}
-
-.critical { background:red; }
-.high { background:orange; }
-.low { background:green; }
+body{font-family:Arial;background:#f5f7fb;padding:30px}
+.card{background:white;padding:20px;border-radius:10px;margin-bottom:20px}
+button{background:red;color:white;border:none;padding:12px 20px;border-radius:6px}
+pre{background:black;color:#00ff00;padding:15px}
+table{width:100%}
 </style>
-
 </head>
 
 <body>
@@ -54,53 +16,57 @@ font-weight:bold;
 <h1>🛡 BlackBox AI Threat Detection System</h1>
 
 <div class="card">
-<button onclick="runAudit()">Run Safety Audit</button>
-<a href="/download"><button>Download Incident Report</button></a>
+<button onclick="audit()">Run Safety Audit</button>
+<button onclick="download()">Download Incident Report</button>
 </div>
 
 <div class="card">
 <h2>Audit Result</h2>
-
-<div id="summary"></div>
-
-<pre id="output">Waiting...</pre>
+<pre id="out">Waiting...</pre>
 </div>
 
 <div class="card">
-<h2>Operational Use</h2>
-<ul>
-<li>Police Cyber Cells</li>
-<li>Airport Surveillance AI</li>
-<li>Defense AI Monitoring</li>
-<li>Critical Infrastructure</li>
-</ul>
+<h2>Incident History</h2>
+<table border="1" id="table"></table>
 </div>
 
 <script>
-
-function runAudit(){
-
+function audit(){
 fetch("/run_audit",{method:"POST"})
-.then(res=>res.json())
-.then(data=>{
+.then(r=>r.json())
+.then(d=>{
+document.getElementById("out").innerText=
+"CASE: "+d.case+
+"\nRisk: "+d.risk+"%\nLocation:"+d.location+
+"\n\n"+d.threats.join("\n");
 
-document.getElementById("summary").innerHTML=`
-<b>Case ID:</b> ${data.case_id}<br>
-<b>Risk Score:</b> ${data.risk}% <span class="badge critical">${data.severity}</span><br>
-<b>Exploit Location:</b> ${data.location}<br>
-`;
-
-document.getElementById("output").innerText =
-"Threats Detected:\n"+
-data.findings.join("\n");
-
+loadHistory();
 });
 }
 
+function loadHistory(){
+fetch("/history")
+.then(r=>r.json())
+.then(rows=>{
+let t="<tr><th>Case</th><th>Risk</th><th>Loc</th><th>Time</th></tr>";
+rows.forEach(r=>{
+t+=`<tr><td>${r[0]}</td><td>${r[1]}%</td><td>${r[2]}</td><td>${r[3]}</td></tr>`;
+});
+document.getElementById("table").innerHTML=t;
+});
+}
+
+function download(){
+window.location="/download";
+}
+
+loadHistory();
 </script>
 
 </body>
 </html>
+
+
 
 
 

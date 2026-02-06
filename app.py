@@ -1,43 +1,68 @@
-from flask import Flask,render_template,jsonify,send_file
+from flask import Flask, render_template, jsonify, send_file
+import random
 import datetime
-import uuid
+import csv
+import os
 
 app = Flask(__name__)
+
+INCIDENT_FILE = "logs/incidents.csv"
+
+os.makedirs("logs", exist_ok=True)
+
+if not os.path.exists(INCIDENT_FILE):
+    with open(INCIDENT_FILE, "w", newline="") as f:
+        writer = csv.writer(f)
+        writer.writerow(["case_id", "risk", "location", "time"])
+
+def generate_case():
+    return hex(random.randint(1000000,9999999))[2:]
 
 @app.route("/")
 def home():
     return render_template("index.html")
 
-@app.route("/run_audit",methods=["POST"])
-def run():
+@app.route("/run_audit", methods=["POST"])
+def run_audit():
+    case = generate_case()
+    risk = random.randint(70,95)
+    loc = "(2,3)"
+    time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-    case_id = str(uuid.uuid4())[:8]
-    time = datetime.datetime.now().strftime("%d-%m-%Y %H:%M")
+    with open(INCIDENT_FILE,"a",newline="") as f:
+        writer = csv.writer(f)
+        writer.writerow([case,risk,loc,time])
 
-    result = {
-        "case_id":case_id,
-        "time":time,
-        "risk":82,
-        "severity":"CRITICAL",
-        "location":"(2,3)",
-        "findings":[
+    return jsonify({
+        "case": case,
+        "risk": risk,
+        "location": loc,
+        "threats":[
             "Reward manipulation detected",
             "Prompt injection vulnerability",
             "Unsafe optimization loop"
         ]
-    }
+    })
 
-    with open("logs/exploits.txt","w") as f:
-        f.write(str(result))
+@app.route("/history")
+def history():
+    rows=[]
+    with open(INCIDENT_FILE) as f:
+        reader=csv.reader(f)
+        next(reader)
+        for r in reader:
+            rows.append(r)
 
-    return jsonify(result)
+    return jsonify(rows)
 
 @app.route("/download")
 def download():
-    return send_file("logs/exploits.txt",as_attachment=True)
+    return send_file(INCIDENT_FILE, as_attachment=True)
 
-if __name__=="__main__":
-    app.run(host="0.0.0.0",port=10000)
+if __name__ == "__main__":
+    app.run()
+
+
 
 
 
