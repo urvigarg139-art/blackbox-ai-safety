@@ -1,4 +1,4 @@
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, jsonify, send_file
 import os
 import json
 from datetime import datetime
@@ -18,7 +18,7 @@ def index():
 @app.route("/run_audit", methods=["POST"])
 def run_audit():
 
-    # Simulated AI exploit detection (demo)
+    # Simulated AI exploit detection (demo / prototype)
     result = {
         "risk": 82,
         "severity": "CRITICAL",
@@ -40,18 +40,23 @@ def run_audit():
 
 @app.route("/history")
 def history():
-
     try:
         with open(INCIDENT_FILE) as f:
             logs = f.read()
     except:
         logs = "No incidents yet."
 
-    return render_template("history.html", logs=logs)
+    return f"<pre>{logs}</pre>"
+
+
+@app.route("/download")
+def download_report():
+    return send_file(INCIDENT_FILE, as_attachment=True)
 
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
+
 
 
 

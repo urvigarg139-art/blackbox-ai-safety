@@ -53,7 +53,6 @@ button:hover {
     font-family: monospace;
 }
 </style>
-
 </head>
 
 <body>
@@ -64,6 +63,12 @@ button:hover {
 
 <div class="card">
 <button onclick="runAudit()">Run Safety Audit</button>
+
+<br><br>
+
+<a href="/download">
+<button>Download Incident Report</button>
+</a>
 </div>
 
 <div class="card">
@@ -93,7 +98,9 @@ function runAudit() {
     .then(data => {
 
         let text =
-`Risk Score: ${data.risk}% (${data.severity})
+`Case ID: ${data.case_id}
+
+Risk Score: ${data.risk}% (${data.severity})
 
 Findings:
 `;
@@ -104,7 +111,11 @@ Findings:
 
         text += "\nExploit Location: " + data.location;
 
-        document.getElementById("output").innerText = text;
+        let box = document.getElementById("output");
+        box.innerText = text;
+
+        // Threat color
+        box.style.color = data.severity == "CRITICAL" ? "red" : "#00ff00";
     })
     .catch(err => {
         document.getElementById("output").innerText = "ERROR connecting server";
@@ -114,6 +125,7 @@ Findings:
 
 </body>
 </html>
+
 
 
 
