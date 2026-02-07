@@ -1,7 +1,7 @@
 flask
 gunicorn
 fpdf
-matplotlib
+
 
 
 
