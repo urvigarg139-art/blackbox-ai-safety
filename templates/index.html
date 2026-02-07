@@ -4,22 +4,14 @@
 <title>BlackBox AI Security Console</title>
 
 <style>
-
 body{font-family:Arial;background:#f4f6f8;padding:40px}
-
 .card{background:white;padding:25px;border-radius:15px;margin-bottom:30px;box-shadow:0 5px 20px rgba(0,0,0,.1)}
-
 textarea{width:100%;height:120px;background:black;color:#0f0;border:none;padding:15px;border-radius:10px}
-
-button{padding:12px 20px;border:none;border-radius:8px;background:#e11d48;color:white;font-size:16px}
-
+button{padding:12px 20px;border:none;border-radius:8px;background:#e11d48;color:white;font-size:16px;margin-right:10px}
 .badge{padding:5px 10px;border-radius:6px;color:white}
-
 .CRITICAL{background:red}
 .MEDIUM{background:orange}
-
 pre{background:black;color:#0f0;padding:20px;border-radius:10px}
-
 </style>
 </head>
 
@@ -28,34 +20,28 @@ pre{background:black;color:#0f0;padding:20px;border-radius:10px}
 <h1>🛡 BlackBox AI Threat Detection Console</h1>
 
 <div class="card">
-
 <textarea id="input" placeholder="Paste AI prompt / behavior here"></textarea><br><br>
-
 <button onclick="run()">Run Audit</button>
 <button onclick="download()">Download Report</button>
-
 <p>Status: <b id="status">Ready</b></p>
-
 </div>
 
 <div class="card">
-
 <h2>Incident Result</h2>
-
 <p>Case ID: <span id="case"></span></p>
 <p>Time: <span id="time"></span></p>
 <p>Risk: <span id="risk"></span></p>
-
 <pre id="out">Waiting...</pre>
+</div>
 
+<div class="card">
+<h2>Risk Trend</h2>
+<img src="/chart" width="500" onerror="this.style.display='none'">
 </div>
 
 <script>
-
 function run(){
-
 document.getElementById("status").innerText="Scanning..."
-
 fetch("/audit",{
 method:"POST",
 headers:{"Content-Type":"application/json"},
@@ -63,19 +49,15 @@ body:JSON.stringify({data:document.getElementById("input").value})
 })
 .then(r=>r.json())
 .then(d=>{
-
 document.getElementById("case").innerText=d.case
 document.getElementById("time").innerText=d.time
 document.getElementById("risk").innerHTML=d.risk+"% <span class='badge "+d.level+"'>"+d.level+"</span>"
 document.getElementById("out").innerText=d.threats.join("\n")
 document.getElementById("status").innerText="Completed"
-
+document.querySelector("img").src="/chart?"+Date.now(); // refresh chart
 })
-
 }
-
 function download(){window.location="/download"}
-
 </script>
 
 </body>
