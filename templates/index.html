@@ -1,67 +1,86 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>BlackBox AI</title>
+<title>BlackBox AI Security</title>
+
 <style>
-body{font-family:Arial;background:#eef;padding:30px}
-.card{background:white;padding:20px;margin:20px;border-radius:10px}
-button{background:red;color:white;padding:10px;border:none}
-pre{background:black;color:#00ff00;padding:15px}
+body {
+font-family: Arial;
+background:#0e1117;
+color:white;
+text-align:center;
+}
+
+.card{
+background:#161b22;
+margin:30px auto;
+padding:30px;
+width:70%;
+border-radius:12px;
+box-shadow:0 0 20px black;
+}
+
+button{
+padding:12px 30px;
+font-size:18px;
+border:none;
+border-radius:8px;
+background:red;
+color:white;
+cursor:pointer;
+}
+
+pre{
+background:black;
+padding:20px;
+color:#00ff00;
+text-align:left;
+border-radius:8px;
+}
 </style>
+
 </head>
 
 <body>
 
-<h1>🛡 BlackBox AI Threat Platform</h1>
+<h1>🛡 BlackBox AI Threat Detection</h1>
 
 <div class="card">
-<button onclick="audit()">Run Audit</button>
-<button onclick="download()">Download PDF</button>
+<button onclick="runAudit()">Run Safety Audit</button>
+<button onclick="window.location='/report'">Download Incident Report</button>
 </div>
 
 <div class="card">
-<h2>Live Result</h2>
+<h2>Audit Result</h2>
 <pre id="out">Waiting...</pre>
 </div>
 
-<div class="card">
-<h2>Threat History</h2>
-<table id="tbl" border="1"></table>
-</div>
-
-<div class="card">
-<h2>Risk Chart</h2>
-<img src="/chart" width="500">
-</div>
-
 <script>
-function audit(){
-fetch("/run_audit",{method:"POST"})
+function runAudit(){
+
+fetch("/audit")
 .then(r=>r.json())
 .then(d=>{
-out.innerText=
-`CASE:${d.case}\nRisk:${d.risk}%\nLocation:${d.loc}\n\n`+
-d.threats.join("\n");
-load();
+
+let txt =
+"Case ID: "+d.case+"\n"+
+"Risk Score: "+d.risk+"%\n"+
+"Exploit Location: "+d.location+"\n\n"+
+"Threats:\n";
+
+d.threats.forEach(t=>{
+txt+= "- "+t+"\n";
+});
+
+document.getElementById("out").innerText = txt;
+
 });
 }
-
-function load(){
-fetch("/history").then(r=>r.json()).then(d=>{
-let t="<tr><th>Case</th><th>Risk</th><th>Loc</th><th>Time</th></tr>";
-d.forEach(r=>{
-t+=`<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td></tr>`;
-});
-tbl.innerHTML=t;
-});
-}
-
-function download(){window.location="/download";}
-load();
 </script>
 
 </body>
 </html>
+
 
 
 
