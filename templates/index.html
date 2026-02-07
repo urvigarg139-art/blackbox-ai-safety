@@ -1,67 +1,118 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>BlackBox AI Security Console</title>
+<title>BlackBox AI Threat Detection</title>
 
 <style>
-body{font-family:Arial;background:#f4f6f8;padding:40px}
-.card{background:white;padding:25px;border-radius:15px;margin-bottom:30px;box-shadow:0 5px 20px rgba(0,0,0,.1)}
-textarea{width:100%;height:120px;background:black;color:#0f0;border:none;padding:15px;border-radius:10px}
-button{padding:12px 20px;border:none;border-radius:8px;background:#e11d48;color:white;font-size:16px;margin-right:10px}
-.badge{padding:5px 10px;border-radius:6px;color:white}
-.CRITICAL{background:red}
-.MEDIUM{background:orange}
-pre{background:black;color:#0f0;padding:20px;border-radius:10px}
+body{
+font-family:Arial;
+background:#f5f7fb;
+padding:30px;
+}
+
+.card{
+background:white;
+padding:20px;
+border-radius:12px;
+margin-bottom:20px;
+box-shadow:0 4px 10px rgba(0,0,0,.1);
+}
+
+button{
+padding:12px 20px;
+border:none;
+border-radius:6px;
+background:#e63946;
+color:white;
+font-size:16px;
+cursor:pointer;
+margin-right:10px;
+}
+
+pre{
+background:black;
+color:#00ff00;
+padding:15px;
+border-radius:6px;
+min-height:150px;
+}
+
+.badge{
+background:red;
+color:white;
+padding:4px 10px;
+border-radius:5px;
+}
 </style>
 </head>
 
 <body>
 
-<h1>🛡 BlackBox AI Threat Detection Console</h1>
+<h1>🛡 BlackBox AI Threat Detection System</h1>
 
 <div class="card">
-<textarea id="input" placeholder="Paste AI prompt / behavior here"></textarea><br><br>
-<button onclick="run()">Run Audit</button>
-<button onclick="download()">Download Report</button>
-<p>Status: <b id="status">Ready</b></p>
+<button onclick="run()">Run Safety Audit</button>
+<a href="/download"><button>Download Incident Report</button></a>
 </div>
 
 <div class="card">
-<h2>Incident Result</h2>
+<h3>Audit Result</h3>
+
 <p>Case ID: <span id="case"></span></p>
 <p>Time: <span id="time"></span></p>
 <p>Risk: <span id="risk"></span></p>
+
 <pre id="out">Waiting...</pre>
 </div>
 
 <div class="card">
-<h2>Risk Trend</h2>
-<img src="/chart" width="500" onerror="this.style.display='none'">
+<h3>Incident History</h3>
+<table border="1" width="100%" id="tbl"></table>
 </div>
 
 <script>
+
 function run(){
-document.getElementById("status").innerText="Scanning..."
-fetch("/audit",{
-method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify({data:document.getElementById("input").value})
-})
+
+fetch("/audit",{method:"POST"})
 .then(r=>r.json())
 .then(d=>{
-document.getElementById("case").innerText=d.case
-document.getElementById("time").innerText=d.time
-document.getElementById("risk").innerHTML=d.risk+"% <span class='badge "+d.level+"'>"+d.level+"</span>"
-document.getElementById("out").innerText=d.threats.join("\n")
-document.getElementById("status").innerText="Completed"
-document.querySelector("img").src="/chart?"+Date.now(); // refresh chart
+
+document.getElementById("case").innerText=d.case;
+document.getElementById("time").innerText=d.time;
+document.getElementById("risk").innerHTML=d.risk+" <span class='badge'>"+d.level+"</span>";
+document.getElementById("out").innerText=d.threats.join("\n");
+
+load();
 })
 }
-function download(){window.location="/download"}
+
+function load(){
+
+fetch("/history")
+.then(r=>r.json())
+.then(rows=>{
+
+let html="<tr><th>Case</th><th>Time</th><th>Risk</th></tr>";
+
+rows.forEach(r=>{
+html+=`<tr><td>${r.case}</td><td>${r.time}</td><td>${r.risk}</td></tr>`;
+})
+
+document.getElementById("tbl").innerHTML=html;
+
+})
+
+}
+
+load();
+
 </script>
 
 </body>
 </html>
+
+
 
 
 

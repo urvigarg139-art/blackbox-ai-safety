@@ -1,25 +1,39 @@
-from flask import Flask, render_template, jsonify, request, send_file
+from flask import Flask, render_template, jsonify, request, send_file, redirect, url_for
 import random, datetime, csv, os, uuid
 from fpdf import FPDF
 
-# matplotlib for server (headless)
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 app = Flask(__name__, static_folder="static")
+app.secret_key = "blackbox-secret"
 
 LOG = "logs/incidents.csv"
 os.makedirs("logs", exist_ok=True)
 os.makedirs("static", exist_ok=True)
 
-# Create CSV if not exists
 if not os.path.exists(LOG):
     with open(LOG, "w", newline="") as f:
         csv.writer(f).writerow(["case", "time", "risk", "level", "threats"])
 
-@app.route("/")
-def home():
+# --- SIMPLE LOGIN (demo) ---
+USERS = {
+    "admin": "admin123",
+    "operator": "operator123"
+}
+
+@app.route("/", methods=["GET","POST"])
+def login():
+    if request.method == "POST":
+        u = request.form.get("username")
+        p = request.form.get("password")
+        if USERS.get(u) == p:
+            return redirect("/dashboard")
+    return render_template("login.html")
+
+@app.route("/dashboard")
+def dashboard():
     return render_template("index.html")
 
 @app.route("/audit", methods=["POST"])
@@ -51,6 +65,16 @@ def audit():
         "time": time
     })
 
+@app.route("/history")
+def history():
+    rows=[]
+    with open(LOG) as f:
+        rd=csv.reader(f)
+        next(rd)
+        for r in rd:
+            rows.append(r)
+    return jsonify(rows)
+
 @app.route("/download")
 def download():
     pdf = FPDF()
@@ -68,31 +92,25 @@ def download():
 
 @app.route("/chart")
 def chart():
-    risks = []
+    risks=[]
     with open(LOG) as f:
-        reader = csv.reader(f)
-        next(reader)
-        for r in reader:
-            try:
-                risks.append(int(r[2]))
-            except:
-                pass
+        rd=csv.reader(f)
+        next(rd)
+        for r in rd:
+            try: risks.append(int(r[2]))
+            except: pass
 
     plt.clf()
     if risks:
         plt.plot(risks)
-        plt.title("Risk Trend Over Time")
-        plt.xlabel("Audit Count")
-        plt.ylabel("Risk Score")
-    else:
-        plt.text(0.5, 0.5, "No data yet", ha="center")
-
-    img_path = "static/risk.png"
-    plt.savefig(img_path)
-    return send_file(img_path, mimetype="image/png")
+        plt.title("Risk Trend")
+    img="static/risk.png"
+    plt.savefig(img)
+    return send_file(img, mimetype="image/png")
 
 if __name__ == "__main__":
     app.run()
+
 
 
 
