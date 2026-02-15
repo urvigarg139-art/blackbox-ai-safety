@@ -1,6 +1,10 @@
 flask
 gunicorn
+scikit-learn
+joblib
+numpy
 fpdf
+
 
 
 
