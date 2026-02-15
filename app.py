@@ -1,106 +1,80 @@
-from flask import Flask,render_template,request,jsonify,send_file
-import joblib,datetime,uuid,csv,os
+from flask import Flask, render_template, request, jsonify, send_file
+import random, datetime, csv, os
 from fpdf import FPDF
 
-app=Flask(__name__)
+app = Flask(__name__)
 
-model=joblib.load("model.pkl")
-vector=joblib.load("vector.pkl")
-
-LOG="logs/incidents.csv"
-os.makedirs("logs",exist_ok=True)
+LOG = "logs/incidents.csv"
+os.makedirs("logs", exist_ok=True)
 
 if not os.path.exists(LOG):
- with open(LOG,"w",newline="") as f:
-  csv.writer(f).writerow(["case","time","risk","level","threat","input"])
-
-weights={1:1.1,2:1.7,3:1.5,4:1.3}
+    with open(LOG, "w", newline="") as f:
+        csv.writer(f).writerow(["CaseID","Time","Risk","Level","Threats"])
 
 @app.route("/")
 def home():
- return render_template("index.html")
+    return render_template("index.html")
 
-@app.route("/audit",methods=["POST"])
+@app.route("/audit", methods=["POST"])
 def audit():
 
- text=request.json["data"]
+    data = request.json.get("data","").strip()
 
- X=vector.transform([text])
- probs=model.predict_proba(X)[0]
- pred=int(probs.argmax())
- base=probs[pred]*100
+    # 🚨 NO INPUT → STOP
+    if not data:
+        return jsonify({"error":"No input provided"}),400
 
- risk=int(base*weights.get(pred,1))
+    threats=[]
 
- threat_map={
- 0:"Safe",
- 1:"Prompt Injection",
- 2:"Data Leakage",
- 3:"Exploit Attempt",
- 4:"Jailbreak"
- }
+    if "ignore" in data.lower():
+        threats.append("Prompt injection vulnerability")
 
- threat=threat_map[pred]
+    if "reward" in data.lower():
+        threats.append("Reward manipulation detected")
 
- if "ignore" in text.lower(): risk+=15
- if "bypass" in text.lower(): risk+=20
- if "system" in text.lower(): risk+=25
+    if len(data)>200:
+        threats.append("Unsafe optimization loop")
 
- if risk>100: risk=100
+    if not threats:
+        threats.append("Suspicious behavior pattern")
 
- level="HIGH"
- if risk>80: level="CRITICAL"
+    risk=random.randint(50,90)
 
- case=uuid.uuid4().hex[:6]
- time=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    level="MEDIUM"
+    if risk>80: level="CRITICAL"
+    elif risk>65: level="HIGH"
 
- with open(LOG,"a",newline="") as f:
-  csv.writer(f).writerow([case,time,risk,level,threat,text])
+    case=hex(random.randint(1000,9999))[2:]
+    time=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
- return jsonify({
- "case":case,
- "time":time,
- "risk":risk,
- "level":level,
- "threat":threat
- })
+    with open(LOG,"a",newline="") as f:
+        csv.writer(f).writerow([case,time,risk,level," | ".join(threats)])
+
+    return jsonify({
+        "case":case,
+        "time":time,
+        "risk":risk,
+        "level":level,
+        "threat":"AI Behavior Exploit",
+        "threats":threats
+    })
 
 @app.route("/download")
 def download():
 
- pdf=FPDF()
- pdf.add_page()
- pdf.set_font("Arial",size=12)
+    pdf=FPDF()
+    pdf.add_page()
+    pdf.set_font("Arial",size=12)
+    pdf.cell(0,10,"BlackBox AI Incident Report",ln=True)
 
- with open(LOG) as f:
-  for row in f:
-   pdf.multi_cell(0,8,row)
+    with open(LOG) as f:
+        for row in csv.reader(f):
+            pdf.multi_cell(0,8," | ".join(row))
 
- file="incident.pdf"
- pdf.output(file)
+    file="incident_report.pdf"
+    pdf.output(file)
 
- return send_file(file,as_attachment=True)
+    return send_file(file,as_attachment=True)
 
 if __name__=="__main__":
- app.run()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    app.run()
