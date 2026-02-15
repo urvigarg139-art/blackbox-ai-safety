@@ -4,12 +4,13 @@ from fpdf import FPDF
 
 app = Flask(__name__)
 
-LOG_FILE = "logs/incidents.csv"
+LOG = "logs/incidents.csv"
 os.makedirs("logs", exist_ok=True)
 
-if not os.path.exists(LOG_FILE):
-    with open(LOG_FILE,"w",newline="") as f:
-        csv.writer(f).writerow(["case","time","risk"])
+if not os.path.exists(LOG):
+    with open(LOG, "w", newline="") as f:
+        writer = csv.writer(f)
+        writer.writerow(["CaseID","Time","Risk","Level","Threats"])
 
 @app.route("/")
 def home():
@@ -17,7 +18,6 @@ def home():
 
 @app.route("/audit", methods=["POST"])
 def audit():
-
     data = request.json.get("data","")
 
     threats = [
@@ -27,52 +27,43 @@ def audit():
     ]
 
     risk = random.randint(70,90)
-    level = "CRITICAL" if risk>80 else "MEDIUM"
+    level = "CRITICAL" if risk>80 else "HIGH"
+    case = hex(random.randint(100000,999999))[2:]
+    t = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-    case = hex(random.randint(1000000,9999999))[2:]
-    time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-    with open(LOG_FILE,"a",newline="") as f:
-        csv.writer(f).writerow([case,time,risk])
+    with open(LOG,"a",newline="") as f:
+        csv.writer(f).writerow([case,t,risk,level," | ".join(threats)])
 
     return jsonify({
         "case":case,
-        "time":time,
+        "time":t,
         "risk":risk,
         "level":level,
-        "threats":threats,
-        "exploit":"(2,3)"
+        "threats":threats
     })
-
-@app.route("/history")
-def history():
-
-    rows=[]
-    with open(LOG_FILE) as f:
-        reader=csv.DictReader(f)
-        for r in reader:
-            rows.append(r)
-
-    return jsonify(rows[::-1])
 
 @app.route("/download")
 def download():
-
     pdf = FPDF()
     pdf.add_page()
-    pdf.set_font("Arial","B",16)
-    pdf.cell(0,10,"BlackBox AI Threat Report",ln=1)
+    pdf.set_font("Arial",size=12)
 
-    pdf.set_font("Arial","",12)
+    pdf.cell(0,10,"BLACKBOX AI INCIDENT REPORT",ln=True)
 
-    with open(LOG_FILE) as f:
-        reader=csv.reader(f)
-        next(reader)
+    with open(LOG) as f:
+        rows=list(csv.reader(f))[1:]
 
-        for row in reader:
-            pdf.cell(0,8,f"Case: {row[0]} | Time: {row[1]} | Risk: {row[2]}%",ln=1)
+    for r in rows[-1:]:
+        pdf.multi_cell(0,8,f"""
+Case ID: {r[0]}
+Time: {r[1]}
+Risk Score: {r[2]}%
+Threat Level: {r[3]}
+Findings:
+{r[4]}
+""")
 
-    path="logs/report.pdf"
+    path="incident.pdf"
     pdf.output(path)
 
     return send_file(path,as_attachment=True)
