@@ -1,6 +1,8 @@
 flask
 gunicorn
 fpdf
+scikit-learn
+
 
 
 
