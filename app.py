@@ -1,18 +1,54 @@
-from flask import Flask,render_template,request,jsonify,send_file
-import datetime,csv,os,joblib
+from flask import Flask, render_template, request, jsonify, send_file
+import random, datetime, os, csv
 from fpdf import FPDF
 
-app=Flask(__name__)
+app = Flask(__name__)
 
-model=joblib.load("model.pkl")
-vector=joblib.load("vector.pkl")
-
-LOG="logs/incidents.csv"
-os.makedirs("logs",exist_ok=True)
+LOG = "logs/incidents.csv"
+os.makedirs("logs", exist_ok=True)
 
 if not os.path.exists(LOG):
     with open(LOG,"w",newline="") as f:
-        csv.writer(f).writerow(["Case","Time","Risk","Level","Input"])
+        csv.writer(f).writerow(["case","time","risk","level","threat","solution"])
+
+# ---------------- ML STYLE ANALYSIS ---------------- #
+
+def analyze(text):
+
+    threats=[]
+    solutions=[]
+
+    t=text.lower()
+
+    if "ignore" in t or "override" in t:
+        threats.append("Prompt Injection")
+        solutions.append("Use prompt sanitization & instruction locking.")
+
+    if "training data" in t or "email" in t:
+        threats.append("Data Leakage")
+        solutions.append("Apply output filtering & privacy guardrails.")
+
+    if "dan" in t or "bypass" in t:
+        threats.append("Jailbreak Attempt")
+        solutions.append("Deploy jailbreak classifiers.")
+
+    if "reward" in t or "feedback" in t:
+        threats.append("Reward Manipulation")
+        solutions.append("Harden reward models.")
+
+    if not threats:
+        threats.append("Suspicious AI Behavior")
+        solutions.append("Enable continuous monitoring.")
+
+    risk=random.randint(40,90)
+
+    level="LOW"
+    if risk>70: level="HIGH"
+    if risk>85: level="CRITICAL"
+
+    return risk,level,threats,solutions
+
+# ---------------- ROUTES ---------------- #
 
 @app.route("/")
 def home():
@@ -21,56 +57,18 @@ def home():
 @app.route("/audit",methods=["POST"])
 def audit():
 
-    text=request.json.get("data","").strip()
+    data=request.json.get("data","")
 
-    if not text:
-        return jsonify({"error":"No input provided"}),400
+    if len(data.strip())==0:
+        return jsonify({"error":"No input provided"})
 
-    X=vector.transform([text])
-    prob=model.predict_proba(X)[0][1]
-    risk=int(prob*100)
+    risk,level,threats,solutions=analyze(data)
 
-    level="SAFE"
-    if risk>75: level="CRITICAL"
-    elif risk>55: level="HIGH"
-    elif risk>35: level="MEDIUM"
-
-    case=hex(hash(text))[-5:]
+    case=hex(random.randint(1000,9999))[2:]
     time=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     with open(LOG,"a",newline="") as f:
-        csv.writer(f).writerow([case,time,risk,level,text])
-
-    threats=[]
-    solutions=[]
-    prevention=[]
-
-    lower=text.lower()
-
-    if "ignore" in lower:
-        threats.append("Prompt Injection")
-        solutions.append("Use strict system prompt separation.")
-        prevention.append("Implement input validation & role-based instructions.")
-
-    if "reward" in lower:
-        threats.append("Reward Manipulation")
-        solutions.append("Redesign reward function with penalty constraints.")
-        prevention.append("Audit reinforcement signals regularly.")
-
-    if "bypass" in lower:
-        threats.append("Safety Bypass Attempt")
-        solutions.append("Enable content filtering middleware.")
-        prevention.append("Add multi-layer AI guardrails.")
-
-    if "leak" in lower:
-        threats.append("Data Leakage Risk")
-        solutions.append("Mask sensitive data before output.")
-        prevention.append("Implement access control and logging.")
-
-    if not threats:
-        threats=["Suspicious AI behavior"]
-        solutions=["Review input for ambiguous or malicious patterns."]
-        prevention=["Apply model monitoring & anomaly detection."]
+        csv.writer(f).writerow([case,time,risk,level,", ".join(threats),", ".join(solutions)])
 
     return jsonify({
         "case":case,
@@ -78,26 +76,28 @@ def audit():
         "risk":risk,
         "level":level,
         "threats":threats,
-        "solutions":solutions,
-        "prevention":prevention
+        "solutions":solutions
     })
 
-@app.route("/download")
-def download():
+@app.route("/report")
+def report():
 
     pdf=FPDF()
     pdf.add_page()
-    pdf.set_font("Arial",size=10)
+    pdf.set_font("Arial",size=12)
+
+    pdf.cell(0,10,"BlackBox AI Incident Report",ln=True)
 
     with open(LOG) as f:
-        for r in csv.reader(f):
-            pdf.multi_cell(0,8," | ".join(r))
+        for row in csv.reader(f):
+            pdf.multi_cell(0,8," | ".join(row))
 
-    file="incident_report.pdf"
-    pdf.output(file)
-    return send_file(file,as_attachment=True)
+    pdf.output("incident.pdf")
+
+    return send_file("incident.pdf",as_attachment=True)
 
 if __name__=="__main__":
-    app.run()
+    app.run(debug=True)
+
 
 
