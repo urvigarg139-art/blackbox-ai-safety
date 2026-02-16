@@ -1,54 +1,25 @@
-from flask import Flask, render_template, request, jsonify, send_file
-import random, datetime, os, csv
-from fpdf import FPDF
+from flask import Flask,render_template,request,jsonify,send_file
+import random,datetime,csv,os
+import joblib
 
-app = Flask(__name__)
+app=Flask(__name__)
 
-LOG = "logs/incidents.csv"
-os.makedirs("logs", exist_ok=True)
+model=joblib.load("model.pkl")
+vector=joblib.load("vector.pkl")
+
+LOG="logs/incidents.csv"
+os.makedirs("logs",exist_ok=True)
 
 if not os.path.exists(LOG):
     with open(LOG,"w",newline="") as f:
-        csv.writer(f).writerow(["case","time","risk","level","threat","solution"])
+        csv.writer(f).writerow(["case","time","risk","level","threat"])
 
-# ---------------- ML STYLE ANALYSIS ---------------- #
-
-def analyze(text):
-
-    threats=[]
-    solutions=[]
-
-    t=text.lower()
-
-    if "ignore" in t or "override" in t:
-        threats.append("Prompt Injection")
-        solutions.append("Use prompt sanitization & instruction locking.")
-
-    if "training data" in t or "email" in t:
-        threats.append("Data Leakage")
-        solutions.append("Apply output filtering & privacy guardrails.")
-
-    if "dan" in t or "bypass" in t:
-        threats.append("Jailbreak Attempt")
-        solutions.append("Deploy jailbreak classifiers.")
-
-    if "reward" in t or "feedback" in t:
-        threats.append("Reward Manipulation")
-        solutions.append("Harden reward models.")
-
-    if not threats:
-        threats.append("Suspicious AI Behavior")
-        solutions.append("Enable continuous monitoring.")
-
-    risk=random.randint(40,90)
-
-    level="LOW"
-    if risk>70: level="HIGH"
-    if risk>85: level="CRITICAL"
-
-    return risk,level,threats,solutions
-
-# ---------------- ROUTES ---------------- #
+solutions={
+"Prompt Injection":"Sanitize inputs + enforce system prompts",
+"Data Leakage":"Apply PII filters + output validation",
+"Reward Manipulation":"Restrict RL feedback loops",
+"Unsafe Optimization":"Enable human oversight"
+}
 
 @app.route("/")
 def home():
@@ -56,19 +27,30 @@ def home():
 
 @app.route("/audit",methods=["POST"])
 def audit():
+    text=request.json.get("data","")
 
-    data=request.json.get("data","")
+    if len(text)<5:
+        return jsonify({"error":"Enter AI output first"})
 
-    if len(data.strip())==0:
-        return jsonify({"error":"No input provided"})
+    X=vector.transform([text])
+    pred=model.predict(X)[0]
 
-    risk,level,threats,solutions=analyze(data)
+    case=str(random.randint(1000,9999))
+    time=str(datetime.datetime.now())[:19]
 
-    case=hex(random.randint(1000,9999))[2:]
-    time=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    if pred==1:
+        risk=random.randint(65,90)
+        level="HIGH"
+        threats=["Prompt Injection","Data Leakage"]
+    else:
+        risk=random.randint(5,25)
+        level="LOW"
+        threats=["Safe"]
+
+    sol=[solutions.get(t,"System Safe") for t in threats]
 
     with open(LOG,"a",newline="") as f:
-        csv.writer(f).writerow([case,time,risk,level,", ".join(threats),", ".join(solutions)])
+        csv.writer(f).writerow([case,time,risk,level,"|".join(threats)])
 
     return jsonify({
         "case":case,
@@ -76,28 +58,24 @@ def audit():
         "risk":risk,
         "level":level,
         "threats":threats,
-        "solutions":solutions
+        "solutions":sol
     })
+
+@app.route("/history")
+def history():
+    rows=[]
+    with open(LOG) as f:
+        for r in csv.reader(f):
+            rows.append(r)
+    return jsonify(rows[1:])
 
 @app.route("/report")
 def report():
-
-    pdf=FPDF()
-    pdf.add_page()
-    pdf.set_font("Arial",size=12)
-
-    pdf.cell(0,10,"BlackBox AI Incident Report",ln=True)
-
-    with open(LOG) as f:
-        for row in csv.reader(f):
-            pdf.multi_cell(0,8," | ".join(row))
-
-    pdf.output("incident.pdf")
-
-    return send_file("incident.pdf",as_attachment=True)
+    return send_file(LOG,as_attachment=True)
 
 if __name__=="__main__":
-    app.run(debug=True)
+    app.run()
+
 
 
 

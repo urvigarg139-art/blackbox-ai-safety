@@ -1,130 +1,142 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<title>BlackBox AI Threat Detection</title>
+<title>BlackBox AI Security</title>
 
 <style>
 body{
 font-family:Arial;
-background:#f4f6f9;
+background:#f3f5f9;
 padding:40px
 }
-
-.card{
+.box{
 background:white;
-padding:25px;
-border-radius:15px;
-box-shadow:0 0 10px #ccc;
-margin-bottom:30px
+padding:30px;
+border-radius:12px;
+margin-bottom:20px;
+box-shadow:0 5px 10px rgba(0,0,0,.1)
 }
-
+button{
+background:red;
+color:white;
+border:none;
+padding:10px 20px;
+border-radius:6px;
+cursor:pointer
+}
 textarea{
 width:100%;
 height:120px;
 padding:10px;
 border-radius:8px
 }
-
-button{
-background:red;
-color:white;
-padding:12px 25px;
-border:none;
-border-radius:8px;
-margin-top:10px;
-cursor:pointer
-}
-
 pre{
 background:black;
 color:lime;
 padding:15px;
-border-radius:10px
+border-radius:8px
 }
-
-.badge{
-background:red;
-color:white;
-padding:5px 10px;
-border-radius:6px
+table{
+width:100%;
+border-collapse:collapse
+}
+td,th{
+border:1px solid #ccc;
+padding:6px
 }
 </style>
+
 </head>
 
 <body>
 
 <h1>🛡 BlackBox AI Threat Detection</h1>
 
-<div class="card">
+<div class="box">
+<textarea id="input" placeholder="Paste AI output here"></textarea><br><br>
 
-<textarea id="input" placeholder="Paste AI prompt / output / logs here..."></textarea>
-
-<br><br>
-
-<button onclick="run()">Run Safety Audit</button>
-
-<button onclick="location.href='/report'">Download Incident Report</button>
-
+<button onclick="runAudit()">Run Audit</button>
+<button onclick="window.location='/report'">Download Report</button>
 </div>
 
-<div class="card">
+<div class="box">
+<h3>Audit Result</h3>
 
-<h2>Audit Result</h2>
-
-<p>Case ID: <span id="case"></span></p>
-
+<p>Case: <span id="case"></span></p>
 <p>Time: <span id="time"></span></p>
+<p>Risk: <span id="risk"></span></p>
 
-<p>Risk: <span id="risk"></span> <span id="level" class="badge"></span></p>
+<pre id="out"></pre>
+<pre id="sol"></pre>
+</div>
 
-<h3>Threats</h3>
-<pre id="threats"></pre>
-
-<h3>Solutions</h3>
-<pre id="solutions"></pre>
-
+<div class="box">
+<h3>Incident History</h3>
+<table id="tbl"></table>
 </div>
 
 <script>
 
-function run(){
+const input=document.getElementById("input")
+const caseEl=document.getElementById("case")
+const timeEl=document.getElementById("time")
+const riskEl=document.getElementById("risk")
+const out=document.getElementById("out")
+const sol=document.getElementById("sol")
+const tbl=document.getElementById("tbl")
 
-let text=document.getElementById("input").value;
+function runAudit(){
 
 fetch("/audit",{
 method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify({data:text})
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({data:input.value})
 })
 
-.then(response=>response.json())
+.then(r=>r.json())
+.then(d=>{
 
-.then(data=>{
+caseEl.innerText=d.case
+timeEl.innerText=d.time
+riskEl.innerText=d.risk+"% "+d.level
 
-if(data.error){
-alert(data.error);
-return;
-}
+out.innerText=d.threats.join("\n")
+sol.innerText="Solutions:\n"+d.solutions.join("\n")
 
-document.getElementById("case").innerText=data.case;
-document.getElementById("time").innerText=data.time;
-document.getElementById("risk").innerText=data.risk+"%";
-document.getElementById("level").innerText=data.level;
-
-document.getElementById("threats").innerText=data.threats.join("\n");
-document.getElementById("solutions").innerText=data.solutions.join("\n");
-
-});
+loadHistory()
+})
 
 }
+
+function loadHistory(){
+
+fetch("/history")
+.then(r=>r.json())
+.then(d=>{
+
+tbl.innerHTML="<tr><th>Case</th><th>Time</th><th>Risk</th><th>Level</th><th>Threat</th></tr>"
+
+d.forEach(x=>{
+tbl.innerHTML+=`<tr>
+<td>${x[0]}</td>
+<td>${x[1]}</td>
+<td>${x[2]}</td>
+<td>${x[3]}</td>
+<td>${x[4]}</td>
+</tr>`
+})
+
+})
+
+}
+
+loadHistory()
 
 </script>
 
 </body>
 </html>
+
 
 
 
