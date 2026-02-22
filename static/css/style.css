@@ -134,3 +134,35 @@ animation:pulse 2s infinite;
 50%{opacity:.8}
 100%{opacity:.2}
 }
+/* Cyber grid background */
+.grid{
+background-image:
+linear-gradient(rgba(0,255,100,.04) 1px, transparent 1px),
+linear-gradient(90deg, rgba(0,255,100,.04) 1px, transparent 1px);
+background-size:40px 40px;
+}
+
+/* Fake scan progress */
+.progress{
+width:100%;
+height:6px;
+background:#111;
+border-radius:10px;
+overflow:hidden;
+margin-top:15px;
+}
+
+#progressFill{
+height:100%;
+width:0%;
+background:#00ff88;
+transition:1s;
+}
+
+/* Severity auto colors */
+.score.low{border-color:#55ff99;color:#55ff99;}
+.score.medium{border-color:#ffee55;color:#ffee55;}
+.score.high{border-color:#ff9944;color:#ff9944;}
+.score.critical{border-color:#ff5555;color:#ff5555;}
+
+/* Pulse already added earlier */

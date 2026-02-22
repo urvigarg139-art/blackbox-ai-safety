@@ -9,45 +9,59 @@
 
 </head>
 
-<body>
+<body class="grid">
 
 <header>
-<h2>🛡 BlackBox AI</h2>
+  <h2>🛡 BlackBox AI</h2>
 </header>
 
 <section class="hero">
-<h1>Find Vulnerabilities<br><span>Before Hackers Do</span></h1>
+  <h1>Find Vulnerabilities<br><span>Before Hackers Do</span></h1>
 </section>
 
 <div class="container">
 
-<div class="scanbar"></div>
+  <div class="scanbar"></div>
 
-<pre><code contenteditable="true" id="input"></code></pre>
+  <!-- Code Input -->
+  <pre>
+<code contenteditable="true" id="input">
+</code>
+  </pre>
 
-<div style="margin-top:15px">
-<button onclick="runAudit()">Run Audit</button>
-<button class="ghost" onclick="loadExample()">Load Example</button>
-<a href="/download"><button class="ghost">Download Report</button></a>
-</div>
+  <!-- Buttons -->
+  <div style="margin-top:15px">
+    <button onclick="runAudit()">Run Audit</button>
+    <button class="ghost" onclick="loadExample()">Load Example</button>
+    <a href="/download"><button class="ghost">Download Report</button></a>
+  </div>
 
-<div class="dash">
+  <!-- Fake Scan Progress -->
+  <div class="progress">
+    <div id="progressFill"></div>
+  </div>
 
-<div class="score">
-<div id="scoreVal">0</div>
-<span>/100</span>
-</div>
+  <!-- Dashboard -->
+  <div class="dash">
 
-<div class="stats">
-<div class="box red" id="critical">0 CRITICAL</div>
-<div class="box orange" id="high">0 HIGH</div>
-<div class="box yellow" id="medium">0 MEDIUM</div>
-<div class="box green" id="low">0 LOW</div>
-</div>
+    <!-- Score Circle -->
+    <div class="score">
+      <div id="scoreVal">0</div>
+      <span>/100</span>
+    </div>
 
-</div>
+    <!-- Severity Boxes -->
+    <div class="stats">
+      <div class="box red" id="critical">0 🔴 CRITICAL</div>
+      <div class="box orange" id="high">0 🟠 HIGH</div>
+      <div class="box yellow" id="medium">0 🟡 MEDIUM</div>
+      <div class="box green" id="low">0 🟢 LOW</div>
+    </div>
 
-<div id="issues"></div>
+  </div>
+
+  <!-- Issues List -->
+  <div id="issues"></div>
 
 </div>
 
