@@ -5,24 +5,14 @@ font-family:Inter;
 color:white;
 }
 
-header{
-display:flex;
-justify-content:space-between;
-padding:20px 40px;
-background:#050505;
-}
+header{padding:20px 40px;}
 
-.status{color:#00ff88;}
-
-.hero{text-align:center;margin-top:80px;}
-
-.hero h1{font-size:55px;}
-
+.hero{text-align:center;margin-top:60px;}
 .hero span{color:#00ff88;}
 
 .container{
 width:70%;
-margin:50px auto;
+margin:40px auto;
 background:#050505;
 padding:30px;
 border-radius:15px;
@@ -46,14 +36,11 @@ color:#00ff88;
 margin-left:10px;
 }
 
-#result{margin-top:20px;color:#00ff88;}
-
 .scanbar{
 height:4px;
-width:100%;
 background:linear-gradient(90deg,transparent,#00ff88,transparent);
 animation:scan 2s infinite;
-margin-bottom:15px;
+margin-bottom:10px;
 }
 
 @keyframes scan{
@@ -61,19 +48,46 @@ margin-bottom:15px;
 100%{transform:translateX(100%)}
 }
 
-.meter{
-height:15px;
-background:#222;
-border-radius:10px;
-margin-top:15px;
-overflow:hidden;
+.dash{
+display:flex;
+gap:40px;
+margin-top:30px;
+align-items:center;
 }
 
-#fill{
-height:100%;
-width:0%;
-background:#00ff88;
-transition:.5s;
+.score{
+width:120px;
+height:120px;
+border-radius:50%;
+border:6px solid #ff5555;
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+color:#ff5555;
+font-size:28px;
+}
+
+.stats{display:flex;gap:10px;}
+
+.box{
+padding:10px 15px;
+border-radius:10px;
+font-size:14px;
+}
+
+.red{background:#402020;color:#ff5555;}
+.orange{background:#403020;color:#ff9944;}
+.yellow{background:#403f20;color:#ffee55;}
+.green{background:#204030;color:#55ff99;}
+
+.issue{
+margin-top:15px;
+padding:15px;
+border-radius:12px;
+background:#180000;
+border:1px solid #ff5555;
+color:#ffaaaa;
 }
 
 pre{

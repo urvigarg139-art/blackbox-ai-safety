@@ -1,12 +1,10 @@
-let txt="Paste your source code and BlackBox will detect vulnerabilities.";
-let i=0;
-
-setInterval(()=>{
-if(i<txt.length){
-document.getElementById("type").innerHTML+=txt[i];
-i++;
+function loadExample(){
+document.getElementById("input").innerText=
+`query = "SELECT * FROM users WHERE id=" + user
+eval(query)
+password = "123456"
+print("<script>alert('hack')</script>")`;
 }
-},40);
 
 function runAudit(){
 
@@ -20,14 +18,20 @@ body:JSON.stringify({data:text})
 .then(res=>res.json())
 .then(d=>{
 
-document.getElementById("result").innerHTML=
-`<b>Language:</b> ${d.language}<br>
-<b>Threat Level:</b> ${d.result}<br>
-<b>Confidence:</b> ${d.confidence}%<br><br>
-<b>Issues:</b><br>${d.issues.join("<br>")}<br><br>
-<b>Fixes:</b><br>${d.fixes.join("<br>")}`;
+document.getElementById("scoreVal").innerText=d.confidence;
 
-document.getElementById("fill").style.width=d.confidence+"%";
+document.getElementById("critical").innerText=d.issues.length+" CRITICAL";
+document.getElementById("high").innerText="0 HIGH";
+document.getElementById("medium").innerText="0 MEDIUM";
+document.getElementById("low").innerText=d.issues.length==0?"1 LOW":"0 LOW";
+
+let html="";
+
+d.issues.forEach(i=>{
+html+=`<div class="issue">🔥 ${i}</div>`;
+});
+
+document.getElementById("issues").innerHTML=html;
 
 });
 }
