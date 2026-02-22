@@ -100,3 +100,37 @@ overflow:auto;
 }
 
 code{outline:none;display:block;}
+.issue{
+cursor:pointer;
+transition:.3s;
+}
+
+.fix{
+display:none;
+margin-top:10px;
+font-size:13px;
+color:#ffdddd;
+}
+
+.issue.open .fix{
+display:block;
+}
+
+.score{
+position:relative;
+}
+
+.score::after{
+content:'';
+position:absolute;
+inset:-8px;
+border-radius:50%;
+border:2px solid #ff5555;
+animation:pulse 2s infinite;
+}
+
+@keyframes pulse{
+0%{opacity:.2}
+50%{opacity:.8}
+100%{opacity:.2}
+}
