@@ -1,0 +1,88 @@
+body{
+margin:0;
+background:black;
+font-family:Inter;
+color:white;
+}
+
+header{
+display:flex;
+justify-content:space-between;
+padding:20px 40px;
+background:#050505;
+}
+
+.status{color:#00ff88;}
+
+.hero{text-align:center;margin-top:80px;}
+
+.hero h1{font-size:55px;}
+
+.hero span{color:#00ff88;}
+
+.container{
+width:70%;
+margin:50px auto;
+background:#050505;
+padding:30px;
+border-radius:15px;
+box-shadow:0 0 40px #00ff8840;
+}
+
+button{
+margin-top:20px;
+background:#00ff88;
+border:none;
+padding:15px 30px;
+border-radius:10px;
+font-weight:bold;
+cursor:pointer;
+}
+
+.ghost{
+background:none;
+border:1px solid #00ff88;
+color:#00ff88;
+margin-left:10px;
+}
+
+#result{margin-top:20px;color:#00ff88;}
+
+.scanbar{
+height:4px;
+width:100%;
+background:linear-gradient(90deg,transparent,#00ff88,transparent);
+animation:scan 2s infinite;
+margin-bottom:15px;
+}
+
+@keyframes scan{
+0%{transform:translateX(-100%)}
+100%{transform:translateX(100%)}
+}
+
+.meter{
+height:15px;
+background:#222;
+border-radius:10px;
+margin-top:15px;
+overflow:hidden;
+}
+
+#fill{
+height:100%;
+width:0%;
+background:#00ff88;
+transition:.5s;
+}
+
+pre{
+background:black;
+padding:15px;
+border-radius:10px;
+border:1px solid #00ff88;
+height:200px;
+overflow:auto;
+}
+
+code{outline:none;display:block;}

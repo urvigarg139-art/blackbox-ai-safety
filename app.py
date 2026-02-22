@@ -4,7 +4,7 @@ import pickle
 
 app = Flask(__name__)
 
-# Load ML model if available
+# Optional ML model
 try:
     model = pickle.load(open("model.pkl", "rb"))
 except:
@@ -24,68 +24,68 @@ def audit():
     threats = []
     fixes = []
 
+    # Language detection
+    if "<html" in code:
+        language = "HTML"
+    elif "def " in code:
+        language = "Python"
+    elif "function" in code:
+        language = "JavaScript"
+    else:
+        language = "Unknown"
+
     # SQL Injection
     if "select" in code and "+" in code:
         threats.append("Possible SQL Injection")
-        fixes.append("Use parameterized queries instead of string concatenation.")
+        fixes.append("Use parameterized queries.")
 
     # XSS
     if "<script>" in code:
         threats.append("Cross Site Scripting (XSS)")
-        fixes.append("Escape HTML input and use safe rendering.")
+        fixes.append("Escape HTML input.")
 
-    # Hardcoded credentials
+    # Hardcoded secrets
     if "password" in code or "apikey" in code:
-        threats.append("Hardcoded Credentials Detected")
-        fixes.append("Store secrets in environment variables.")
+        threats.append("Hardcoded Credentials")
+        fixes.append("Use environment variables.")
 
-    # Dangerous eval
+    # Unsafe eval
     if "eval(" in code:
         threats.append("Unsafe eval() usage")
-        fixes.append("Avoid eval(). Use safer parsing methods.")
+        fixes.append("Avoid eval.")
 
-    if len(threats) == 0:
+    score = min(len(threats) * 25, 100)
+
+    if score == 0:
         level = "LOW RISK"
+    elif score < 50:
+        level = "MEDIUM RISK"
     else:
         level = "HIGH RISK"
 
     return jsonify({
         "result": level,
         "issues": threats,
-        "fixes": fixes
+        "fixes": fixes,
+        "confidence": score,
+        "language": language
     })
 
 
 @app.route("/download")
 def download():
-
     pdf = FPDF()
     pdf.add_page()
     pdf.set_font("Arial", size=12)
-
     pdf.cell(200, 10, "BlackBox AI Security Report", ln=True)
     pdf.cell(200, 10, "Threat Analysis Completed", ln=True)
-
     pdf.output("report.pdf")
-
     return send_file("report.pdf", as_attachment=True)
 
 
 @app.route("/dashboard")
 def dashboard():
     return render_template("dashboard.html")
-
-
-@app.route("/login", methods=["POST"])
-def login():
-
-    u = request.form["user"]
-    p = request.form["pass"]
-
-    if u == "admin" and p == "123":
-        return redirect("/dashboard")
-
-    return "Invalid credentials"
 
 
 if __name__ == "__main__":
