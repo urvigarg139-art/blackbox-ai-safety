@@ -6,7 +6,6 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-
 </head>
 
 <body class="grid">
@@ -23,46 +22,40 @@
 
   <div class="scanbar"></div>
 
-  <!-- Code Input -->
-  <pre>
-<code contenteditable="true" id="input">
-</code>
-  </pre>
+  <pre><code contenteditable="true" id="input"></code></pre>
 
-  <!-- Buttons -->
   <div style="margin-top:15px">
     <button onclick="runAudit()">Run Audit</button>
     <button class="ghost" onclick="loadExample()">Load Example</button>
     <a href="/download"><button class="ghost">Download Report</button></a>
   </div>
 
-  <!-- Fake Scan Progress -->
   <div class="progress">
     <div id="progressFill"></div>
   </div>
 
-  <!-- Dashboard -->
   <div class="dash">
-
-    <!-- Score Circle -->
     <div class="score">
       <div id="scoreVal">0</div>
       <span>/100</span>
     </div>
 
-    <!-- Severity Boxes -->
     <div class="stats">
       <div class="box red" id="critical">0 🔴 CRITICAL</div>
       <div class="box orange" id="high">0 🟠 HIGH</div>
       <div class="box yellow" id="medium">0 🟡 MEDIUM</div>
       <div class="box green" id="low">0 🟢 LOW</div>
     </div>
-
   </div>
 
-  <!-- Issues List -->
   <div id="issues"></div>
+  <div id="history"></div>
 
+</div>
+
+<div style="text-align:center;margin-top:60px;color:#aaa">
+BlackBox AI — Developer Security Scanner<br>
+Built for Hackathons & Early Threat Detection
 </div>
 
 <script src="{{ url_for('static', filename='js/app.js') }}"></script>

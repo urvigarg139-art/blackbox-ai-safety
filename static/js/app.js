@@ -20,22 +20,12 @@ el.innerText=current;
 },10);
 }
 
-function setSeverity(score){
-let s=document.querySelector(".score");
-s.classList.remove("low","medium","high","critical");
-
-if(score==0) s.classList.add("low");
-else if(score<40) s.classList.add("medium");
-else if(score<70) s.classList.add("high");
-else s.classList.add("critical");
-}
-
 function runAudit(){
 
-let text=document.getElementById("input").innerText;
-
-// fake scan animation
+document.getElementById("issues").innerHTML="🤖 AI analyzing...";
 document.getElementById("progressFill").style.width="100%";
+
+let text=document.getElementById("input").innerText;
 
 fetch("/audit",{
 method:"POST",
@@ -45,8 +35,7 @@ body:JSON.stringify({data:text})
 .then(res=>res.json())
 .then(d=>{
 
-animateScore(d.confidence);
-setSeverity(d.confidence);
+animateScore(d.score);
 
 document.getElementById("critical").innerText=d.issues.length+" 🔴 CRITICAL";
 document.getElementById("high").innerText="0 🟠 HIGH";
@@ -59,14 +48,28 @@ d.issues.forEach(i=>{
 html+=`
 <div class="issue" onclick="this.classList.toggle('open')">
 🔥 ${i}
-<div class="fix">Suggested fix: sanitize inputs, avoid eval, remove hardcoded secrets.</div>
+<div class="fix">
+Suggested fix: sanitize inputs, avoid eval, remove hardcoded secrets.
+<button onclick="navigator.clipboard.writeText('sanitize inputs, avoid eval, remove hardcoded secrets')">
+Copy Fix
+</button>
+</div>
 </div>`;
 });
 
 document.getElementById("issues").innerHTML=html;
 
-// reset progress
 setTimeout(()=>{document.getElementById("progressFill").style.width="0%"},1000);
+
+fetch("/history")
+.then(r=>r.json())
+.then(h=>{
+let historyHtml="<h3>Previous Scans</h3>";
+h.forEach(s=>{
+historyHtml+=`<div class="issue">Score: ${s.score}</div>`;
+});
+document.getElementById("history").innerHTML=historyHtml;
+});
 
 });
 }
