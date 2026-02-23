@@ -1,6 +1,7 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+<meta charset="UTF-8">
 <title>BlackBox Cyber SaaS</title>
 
 <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
@@ -18,16 +19,17 @@
 
 <section class="hero">
 <h1>Find <span>Vulnerabilities</span><br>Before Hackers Do</h1>
-<p>Paste your code and let BlackBox detect threats instantly.</p>
+<p>Paste your code and let BlackBox detect security threats instantly.</p>
 </section>
 
 <div class="main">
 
+<!-- LEFT PANEL -->
 <div class="left">
 
 <div class="editor">
 <div class="bar">source-code.ts</div>
-<textarea id="code"></textarea>
+<textarea id="code" placeholder="// Paste your code here"></textarea>
 </div>
 
 <div class="actions">
@@ -37,10 +39,15 @@
 
 </div>
 
+<!-- RIGHT PANEL -->
 <div class="right">
 
 <div class="scorebox">
+
+<div class="score-ring">
 <canvas id="chart"></canvas>
+<div id="scoreText">0</div>
+</div>
 
 <div class="sev">
 <div><span id="critical">0</span> CRITICAL</div>
@@ -52,6 +59,7 @@
 </div>
 
 <div id="issues"></div>
+<div id="history"></div>
 
 </div>
 
