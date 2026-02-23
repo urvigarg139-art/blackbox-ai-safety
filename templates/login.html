@@ -1,27 +1,7 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Login - BlackBox</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-</head>
-<body class="grid">
-
-<div class="container" style="width:400px;text-align:center">
-<h2>🔐 BlackBox Login</h2>
-
-<form method="POST">
-<input name="username" placeholder="Username" required><br><br>
-<input name="password" type="password" placeholder="Password" required><br><br>
-<button type="submit">Login</button>
+<h2>Login</h2>
+<form method="post">
+<input name="username" placeholder="username"><br><br>
+<input name="password" type="password"><br><br>
+<button>Login</button>
 </form>
-
-<p style="margin-top:15px;font-size:13px;color:#aaa">
-Demo users:<br>
-admin / 123<br>
-urvi / pass
-</p>
-</div>
-
-</body>
-</html>
+<a href="/signup">Signup</a>

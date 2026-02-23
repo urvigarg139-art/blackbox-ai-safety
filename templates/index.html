@@ -1,66 +1,21 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>BlackBox AI</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-</head>
+<h2>Welcome {{user}}</h2>
 
-<body class="grid">
+Total scans: {{total}}  
+Avg risk: {{avg}}%
 
-<header>
-<h2>🛡 BlackBox AI</h2>
-<div>
-User: {{ user }} |
-Total Scans: {{ total }} |
-Avg Risk: {{ avg }}%
-<a href="/clear"><button class="ghost">Clear History</button></a>
-<a href="/logout"><button class="ghost">Logout</button></a>
-</div>
-</header>
+<br><br>
 
-<section class="hero">
-<h1>Find Vulnerabilities<br><span>Before Hackers Do</span></h1>
-</section>
+<textarea id="input" style="width:400px;height:150px"></textarea><br>
 
-<div class="container">
+<button onclick="scan()">Scan</button>
+<a href="/logout">Logout</a>
 
-<div class="scanbar"></div>
-
-<pre><code contenteditable="true" id="input"></code></pre>
-
-<div style="margin-top:15px">
-<button onclick="runAudit()">Run Audit</button>
-<button class="ghost" onclick="loadExample()">Load Example</button>
-<a href="/download"><button class="ghost">Download Report</button></a>
-</div>
-
-<div class="progress">
-<div id="progressFill"></div>
-</div>
-
-<div class="dash">
-<div class="score">
-<div id="scoreVal">0</div>
-<span>/100</span>
-</div>
-
-<div class="stats">
-<div class="box red" id="critical">0 🔴 CRITICAL</div>
-<div class="box green" id="low">0 🟢 LOW</div>
-</div>
-</div>
-
+<h3 id="score"></h3>
 <div id="issues"></div>
+<h3>History</h3>
 <div id="history"></div>
 
-</div>
-
-<script src="{{ url_for('static', filename='js/app.js') }}"></script>
-
-</body>
-</html>
-
+<script src="{{ url_for('static',filename='js/app.js') }}"></script>
 
 
 
