@@ -1,7 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>BlackBox Login</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+<body>
+
 <form method="post">
+
 <h2>BlackBox Login</h2>
-<input name="username" placeholder="username"><br><br>
-<input name="password" type="password"><br><br>
-<button>Login</button><br>
+
+<input name="username" placeholder="Username" required>
+
+<input name="password" type="password" placeholder="Password" required>
+
+<button>Login</button>
+
 <a href="/signup">Signup</a>
+
 </form>
+
+</body>
+</html>

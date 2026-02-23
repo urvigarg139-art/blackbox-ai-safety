@@ -1,7 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Signup</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+<body>
+
 <form method="post">
+
 <h2>Create Account</h2>
-<input name="username"><br><br>
-<input name="password" type="password"><br><br>
-<button>Create</button><br>
+
+<input name="username" placeholder="Username">
+
+<input name="password" type="password" placeholder="Password">
+
+<button>Create</button>
+
 <a href="/login">Login</a>
+
 </form>
+
+</body>
+</html>
