@@ -2,132 +2,179 @@
 margin:0;
 padding:0;
 box-sizing:border-box;
-font-family: "Segoe UI", monospace;
+font-family:"Segoe UI",monospace;
 }
 
 body{
 background:#050b08;
-color:#7CFFB2;
+color:#9affd3;
 min-height:100vh;
-text-align:center;
 background-image:
-linear-gradient(rgba(0,255,150,.03) 1px, transparent 1px),
-linear-gradient(90deg, rgba(0,255,150,.03) 1px, transparent 1px);
+linear-gradient(rgba(0,255,150,.04) 1px, transparent 1px),
+linear-gradient(90deg, rgba(0,255,150,.04) 1px, transparent 1px);
 background-size:40px 40px;
 }
 
 /* HEADER */
-h1{
-margin:25px 0;
-font-size:42px;
-text-shadow:0 0 20px #00ff99;
+header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:20px 60px;
+border-bottom:1px solid rgba(0,255,153,.2);
 }
 
-/* CODE INPUT */
-textarea{
-width:70%;
-height:200px;
-background:#020806;
-border:1px solid #00ff99;
-border-radius:12px;
+.logo{
+font-size:22px;
 color:#00ff99;
-padding:15px;
-font-size:14px;
-box-shadow:0 0 25px rgba(0,255,153,.3);
-outline:none;
-}
-
-/* BUTTONS */
-button{
-margin-top:20px;
-padding:12px 28px;
-border:none;
-border-radius:30px;
-background:linear-gradient(90deg,#00ff99,#00ccff);
-color:black;
-font-weight:600;
-cursor:pointer;
-box-shadow:0 0 15px #00ff99;
-transition:.3s;
-}
-
-button:hover{
-transform:scale(1.05);
-box-shadow:0 0 25px #00ff99;
-}
-
-/* LOADER */
-#loader{
-margin:20px auto;
-width:300px;
-height:10px;
-background:#02110b;
-border-radius:20px;
-overflow:hidden;
-display:none;
-}
-
-#loader:before{
-content:"";
-display:block;
-height:100%;
-width:40%;
-background:#00ff99;
-animation:scan 1.2s infinite;
-}
-
-@keyframes scan{
-0%{margin-left:-40%}
-100%{margin-left:100%}
-}
-
-/* SCORE */
-#score{
-font-size:28px;
-margin-top:25px;
 text-shadow:0 0 15px #00ff99;
 }
 
-/* ISSUES */
-#issues{
-margin-top:15px;
-font-size:14px;
-line-height:1.6;
-}
-
-/* PIE CHART */
-canvas{
-margin:40px auto;
-max-width:300px;
-}
-
-/* LOGIN / SIGNUP */
-form{
-margin:120px auto;
-width:300px;
-background:rgba(0,255,150,.05);
-padding:40px;
-border-radius:15px;
-box-shadow:0 0 30px rgba(0,255,153,.3);
-}
-
-input{
-width:100%;
-padding:10px;
-margin-top:15px;
-background:#020806;
+.status{
+padding:6px 14px;
+border-radius:20px;
+background:rgba(0,255,153,.1);
 border:1px solid #00ff99;
-color:#00ff99;
-border-radius:8px;
+animation:pulse 1.5s infinite;
 }
 
-a{
-display:block;
-margin-top:15px;
+@keyframes pulse{
+0%{box-shadow:0 0 5px #00ff99}
+50%{box-shadow:0 0 20px #00ff99}
+100%{box-shadow:0 0 5px #00ff99}
+}
+
+.logout{
 color:#00ff99;
 text-decoration:none;
 }
 
-a:hover{
-text-decoration:underline;
+/* HERO */
+.hero{
+text-align:center;
+margin:70px 0;
+}
+
+.hero h1{
+font-size:52px;
+line-height:1.1;
+}
+
+.hero span{
+color:#00ff99;
+text-shadow:0 0 20px #00ff99;
+}
+
+.hero p{
+margin-top:15px;
+opacity:.7;
+}
+
+/* MAIN GRID */
+.main{
+display:flex;
+padding:0 60px 60px;
+}
+
+.left{width:55%}
+.right{width:45%;padding-left:40px}
+
+/* EDITOR */
+.editor{
+border:1px solid rgba(0,255,153,.5);
+border-radius:14px;
+overflow:hidden;
+background:#020806;
+box-shadow:0 0 40px rgba(0,255,153,.2);
+}
+
+.bar{
+padding:10px 15px;
+background:#02130c;
+font-size:13px;
+opacity:.7;
+}
+
+textarea{
+width:100%;
+height:320px;
+background:#020806;
+border:none;
+color:#00ff99;
+padding:20px;
+outline:none;
+resize:none;
+}
+
+/* BUTTONS */
+.actions{margin-top:15px}
+
+button{
+padding:12px 26px;
+border-radius:30px;
+background:transparent;
+color:#00ff99;
+border:1px solid #00ff99;
+cursor:pointer;
+margin-right:10px;
+transition:.3s;
+}
+
+button:hover{
+background:#00ff99;
+color:black;
+box-shadow:0 0 20px #00ff99;
+}
+
+.primary{
+background:#00ff99;
+color:black;
+}
+
+/* SCORE PANEL */
+.scorebox{
+display:flex;
+align-items:center;
+justify-content:space-between;
+background:rgba(255,255,255,.02);
+padding:20px;
+border-radius:16px;
+box-shadow:0 0 30px rgba(0,255,153,.2);
+}
+
+/* PIE */
+canvas{max-width:180px}
+
+/* SEVERITY */
+.sev div{
+margin-bottom:10px;
+padding:8px 14px;
+border-radius:10px;
+background:rgba(255,255,255,.05);
+}
+
+/* ISSUES */
+#issues{
+margin-top:20px;
+max-height:240px;
+overflow:auto;
+}
+
+.issue{
+margin-bottom:10px;
+padding:12px;
+border-radius:12px;
+background:rgba(255,255,255,.04);
+border-left:4px solid #ff3b3b;
+}
+
+/* SCROLLBAR */
+#issues::-webkit-scrollbar{width:6px}
+#issues::-webkit-scrollbar-thumb{background:#00ff99}
+
+/* MOBILE */
+@media(max-width:900px){
+.main{flex-direction:column}
+.left,.right{width:100%}
+.right{padding-left:0;margin-top:30px}
 }

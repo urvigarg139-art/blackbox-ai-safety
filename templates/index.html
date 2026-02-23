@@ -1,20 +1,66 @@
-<link rel="stylesheet" href="/static/css/style.css">
+<!DOCTYPE html>
+<html>
+<head>
+<title>BlackBox Cyber SaaS</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<h1>🛡 BlackBox Cyber SaaS</h1>
+</head>
 
-<textarea id="code"></textarea><br>
-<button onclick="scan()">Run Scan</button>
-<a href="/logout">Logout</a>
+<body>
 
-<div id="loader">Analyzing...</div>
+<header>
+<div class="logo">🛡 BlackBox AI</div>
+<div class="status" id="status">Idle</div>
+<a href="/logout" class="logout">Logout</a>
+</header>
 
-<canvas id="pie"></canvas>
+<section class="hero">
+<h1>Find <span>Vulnerabilities</span><br>Before Hackers Do</h1>
+<p>Paste your code and let BlackBox detect threats instantly.</p>
+</section>
 
-<div id="score"></div>
+<div class="main">
+
+<div class="left">
+
+<div class="editor">
+<div class="bar">source-code.ts</div>
+<textarea id="code"></textarea>
+</div>
+
+<div class="actions">
+<button onclick="loadExample()">Load Example</button>
+<button class="primary" onclick="scan()">Run Scan</button>
+</div>
+
+</div>
+
+<div class="right">
+
+<div class="scorebox">
+<canvas id="chart"></canvas>
+
+<div class="sev">
+<div><span id="critical">0</span> CRITICAL</div>
+<div><span id="high">0</span> HIGH</div>
+<div><span id="medium">0</span> MEDIUM</div>
+<div><span id="low">0</span> LOW</div>
+</div>
+
+</div>
+
 <div id="issues"></div>
 
-<script src="/static/js/app.js"></script>
+</div>
+
+</div>
+
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+
+</body>
+</html>
 
 
 
