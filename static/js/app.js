@@ -9,7 +9,6 @@ print("<script>alert('hack')</script>")`;
 function animateScore(target){
 let current=0;
 let el=document.getElementById("scoreVal");
-
 let interval=setInterval(()=>{
 if(current>=target){
 clearInterval(interval);
@@ -38,23 +37,11 @@ body:JSON.stringify({data:text})
 animateScore(d.score);
 
 document.getElementById("critical").innerText=d.issues.length+" 🔴 CRITICAL";
-document.getElementById("high").innerText="0 🟠 HIGH";
-document.getElementById("medium").innerText="0 🟡 MEDIUM";
 document.getElementById("low").innerText=d.issues.length==0?"1 🟢 LOW":"0 🟢 LOW";
 
 let html="";
-
 d.issues.forEach(i=>{
-html+=`
-<div class="issue" onclick="this.classList.toggle('open')">
-🔥 ${i}
-<div class="fix">
-Suggested fix: sanitize inputs, avoid eval, remove hardcoded secrets.
-<button onclick="navigator.clipboard.writeText('sanitize inputs, avoid eval, remove hardcoded secrets')">
-Copy Fix
-</button>
-</div>
-</div>`;
+html+=`<div class="issue">🔥 ${i}</div>`;
 });
 
 document.getElementById("issues").innerHTML=html;

@@ -1,16 +1,50 @@
-from flask import Flask, render_template, request, jsonify, send_file
+from flask import Flask, render_template, request, jsonify, redirect, url_for, session, send_file
 from fpdf import FPDF
 
 app = Flask(__name__)
+app.secret_key = "blackbox_secret_key"
 
-scan_history = []
+# Demo users
+users = {
+    "admin": "123",
+    "urvi": "pass"
+}
+
+# Store history per user
+user_history = {}
 
 @app.route("/")
 def home():
-    return render_template("index.html")
+    if "user" in session:
+        return render_template("index.html", user=session["user"])
+    return redirect(url_for("login"))
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        username = request.form["username"]
+        password = request.form["password"]
+
+        if username in users and users[username] == password:
+            session["user"] = username
+            if username not in user_history:
+                user_history[username] = []
+            return redirect(url_for("home"))
+
+        return "Invalid Credentials"
+
+    return render_template("login.html")
+
+@app.route("/logout")
+def logout():
+    session.pop("user", None)
+    return redirect(url_for("login"))
 
 @app.route("/audit", methods=["POST"])
 def audit():
+
+    if "user" not in session:
+        return jsonify({"error": "Unauthorized"}), 401
 
     code = request.json["data"].lower()
     threats = []
@@ -29,18 +63,16 @@ def audit():
 
     score = min(len(threats) * 35, 100)
 
-    scan = {
-        "score": score,
-        "issues": threats
-    }
-
-    scan_history.append(scan)
+    scan = {"score": score, "issues": threats}
+    user_history[session["user"]].append(scan)
 
     return jsonify(scan)
 
 @app.route("/history")
 def history():
-    return jsonify(scan_history)
+    if "user" not in session:
+        return jsonify([])
+    return jsonify(user_history.get(session["user"], []))
 
 @app.route("/download")
 def download():
