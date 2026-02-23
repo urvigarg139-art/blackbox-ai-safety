@@ -1,22 +1,27 @@
 function scan(){
 
+loader.style.display="block";
+
 fetch("/scan",{
 method:"POST",
 headers:{"Content-Type":"application/json"},
-body:JSON.stringify({code:document.getElementById("code").value})
+body:JSON.stringify({code:code.value})
 })
 .then(r=>r.json())
 .then(d=>{
-score.innerHTML="Risk: "+d.score+"%";
-issues.innerHTML="Issues: "+d.issues.join(", ");
-cat.innerHTML="Categories: "+d.category.join(", ");
 
-fetch("/history")
-.then(r=>r.json())
-.then(h=>{
-let html="";
-h.forEach(x=>html+=`Score ${x[0]} at ${x[1]}<br>`);
-history.innerHTML=html;
+loader.style.display="none";
+score.innerHTML="Risk Score: "+d.score;
+issues.innerHTML=d.issues.join("<br>");
+
+new Chart(pie,{
+type:"doughnut",
+data:{
+labels:["Critical","High","Medium","Low"],
+datasets:[{
+data:[d.critical,d.high,d.medium,d.low]
+}]
+}
 });
 });
 }

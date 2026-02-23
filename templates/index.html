@@ -1,21 +1,20 @@
-<h2>BlackBox v5 — {{user}}</h2>
-Avg Risk: {{avg}}%
+<link rel="stylesheet" href="/static/css/style.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<br><br>
+<h1>🛡 BlackBox Cyber SaaS</h1>
 
-<textarea id="code" style="width:400px;height:150px"></textarea><br>
-<button onclick="scan()">Scan</button>
+<textarea id="code"></textarea><br>
+<button onclick="scan()">Run Scan</button>
 <a href="/logout">Logout</a>
 
-<h3 id="score"></h3>
+<div id="loader">Analyzing...</div>
+
+<canvas id="pie"></canvas>
+
+<div id="score"></div>
 <div id="issues"></div>
-<div id="cat"></div>
 
-<h3>History</h3>
-<div id="history"></div>
-
-<script src="{{ url_for('static',filename='js/app.js') }}"></script>
-
+<script src="/static/js/app.js"></script>
 
 
 
