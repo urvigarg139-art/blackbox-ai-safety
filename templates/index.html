@@ -1,17 +1,16 @@
-<h2>Welcome {{user}}</h2>
-
-Total scans: {{total}}  
-Avg risk: {{avg}}%
+<h2>BlackBox v5 — {{user}}</h2>
+Avg Risk: {{avg}}%
 
 <br><br>
 
-<textarea id="input" style="width:400px;height:150px"></textarea><br>
-
+<textarea id="code" style="width:400px;height:150px"></textarea><br>
 <button onclick="scan()">Scan</button>
 <a href="/logout">Logout</a>
 
 <h3 id="score"></h3>
 <div id="issues"></div>
+<div id="cat"></div>
+
 <h3>History</h3>
 <div id="history"></div>
 

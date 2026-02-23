@@ -1,129 +1,133 @@
-from flask import Flask, render_template, request, jsonify, redirect, url_for, session
-import sqlite3
+from flask import Flask, render_template, request, jsonify, redirect, session
+import sqlite3, hashlib
 from datetime import datetime
 
 app = Flask(__name__)
-app.secret_key = "blackbox_v4_secret"
+app.secret_key = "blackbox_v5"
 
-DB = "blackbox.db"
-
+DB="blackbox.db"
 
 def db():
     return sqlite3.connect(DB)
 
-
-# ---------- INIT DATABASE ----------
+# ---------- INIT ----------
 
 with db() as con:
-    cur = con.cursor()
-    cur.execute("""CREATE TABLE IF NOT EXISTS users(
-        id INTEGER PRIMARY KEY,
-        username TEXT UNIQUE,
-        password TEXT)""")
+    con.execute("""CREATE TABLE IF NOT EXISTS users(
+    id INTEGER PRIMARY KEY,
+    username TEXT UNIQUE,
+    password TEXT)""")
 
-    cur.execute("""CREATE TABLE IF NOT EXISTS scans(
-        id INTEGER PRIMARY KEY,
-        user TEXT,
-        score INTEGER,
-        issues TEXT,
-        time TEXT)""")
+    con.execute("""CREATE TABLE IF NOT EXISTS scans(
+    id INTEGER PRIMARY KEY,
+    user TEXT,
+    score INTEGER,
+    issues TEXT,
+    category TEXT,
+    time TEXT)""")
 
+# ---------- ML STYLE SCORER ----------
+
+def ai_score(code):
+
+    score=0
+    issues=[]
+    category=[]
+
+    if "select" in code and "+" in code:
+        score+=25
+        issues.append("SQL Injection")
+        category.append("Injection")
+
+    if "<script>" in code:
+        score+=25
+        issues.append("XSS")
+        category.append("Client Side")
+
+    if "password" in code:
+        score+=25
+        issues.append("Hardcoded Secret")
+        category.append("Credential Leak")
+
+    if "eval(" in code:
+        score+=25
+        issues.append("Unsafe Eval")
+        category.append("Code Execution")
+
+    return min(score,100),issues,category
 
 # ---------- AUTH ----------
 
-@app.route("/", methods=["GET"])
+@app.route("/",methods=["GET"])
 def home():
     if "user" not in session:
         return redirect("/login")
 
     with db() as con:
-        cur = con.cursor()
-        cur.execute("SELECT score FROM scans WHERE user=?", (session["user"],))
-        rows = cur.fetchall()
+        rows=con.execute("SELECT score FROM scans WHERE user=?",(session["user"],)).fetchall()
 
-    total = len(rows)
-    avg = int(sum([r[0] for r in rows]) / total) if total else 0
+    avg=int(sum([r[0] for r in rows])/len(rows)) if rows else 0
+    return render_template("index.html",user=session["user"],avg=avg)
 
-    return render_template("index.html", user=session["user"], total=total, avg=avg)
-
-
-@app.route("/signup", methods=["GET","POST"])
+@app.route("/signup",methods=["GET","POST"])
 def signup():
     if request.method=="POST":
         u=request.form["username"]
-        p=request.form["password"]
+        p=hashlib.sha256(request.form["password"].encode()).hexdigest()
 
         try:
             with db() as con:
                 con.execute("INSERT INTO users VALUES(NULL,?,?)",(u,p))
             return redirect("/login")
         except:
-            return "Username already exists"
+            return "User exists"
 
     return render_template("signup.html")
 
-
-@app.route("/login", methods=["GET","POST"])
+@app.route("/login",methods=["GET","POST"])
 def login():
     if request.method=="POST":
         u=request.form["username"]
-        p=request.form["password"]
+        p=hashlib.sha256(request.form["password"].encode()).hexdigest()
 
         with db() as con:
-            cur=con.cursor()
-            cur.execute("SELECT * FROM users WHERE username=? AND password=?",(u,p))
+            cur=con.execute("SELECT * FROM users WHERE username=? AND password=?",(u,p))
             if cur.fetchone():
                 session["user"]=u
                 return redirect("/")
 
-        return "Invalid credentials"
+        return "Invalid login"
 
     return render_template("login.html")
-
 
 @app.route("/logout")
 def logout():
     session.clear()
     return redirect("/login")
 
+# ---------- API ----------
 
-# ---------- SCANNER ----------
+@app.route("/scan",methods=["POST"])
+def scan():
 
-@app.route("/audit", methods=["POST"])
-def audit():
-
-    code=request.json["data"].lower()
-    issues=[]
-
-    if "select" in code and "+" in code:
-        issues.append("SQL Injection")
-
-    if "<script>" in code:
-        issues.append("XSS")
-
-    if "password" in code:
-        issues.append("Hardcoded Secret")
-
-    if "eval(" in code:
-        issues.append("Unsafe eval")
-
-    score=min(len(issues)*25,100)
+    code=request.json["code"].lower()
+    score,issues,category=ai_score(code)
 
     with db() as con:
-        con.execute("INSERT INTO scans VALUES(NULL,?,?,?,?)",
-        (session["user"],score,",".join(issues),datetime.now()))
+        con.execute("INSERT INTO scans VALUES(NULL,?,?,?,?,?)",
+        (session["user"],score,",".join(issues),",".join(category),datetime.now()))
 
-    return jsonify({"score":score,"issues":issues})
-
+    return jsonify({
+        "score":score,
+        "issues":issues,
+        "category":category
+    })
 
 @app.route("/history")
 def history():
     with db() as con:
-        cur=con.cursor()
-        cur.execute("SELECT score,time FROM scans WHERE user=?",(session["user"],))
-        return jsonify(cur.fetchall())
-
+        rows=con.execute("SELECT score,time FROM scans WHERE user=?",(session["user"],)).fetchall()
+    return jsonify(rows)
 
 if __name__=="__main__":
     app.run(debug=True)
-

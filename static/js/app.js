@@ -1,14 +1,15 @@
 function scan(){
 
-fetch("/audit",{
+fetch("/scan",{
 method:"POST",
 headers:{"Content-Type":"application/json"},
-body:JSON.stringify({data:input.value})
+body:JSON.stringify({code:document.getElementById("code").value})
 })
 .then(r=>r.json())
 .then(d=>{
-score.innerHTML="Risk: "+d.score;
-issues.innerHTML=d.issues.join("<br>");
+score.innerHTML="Risk: "+d.score+"%";
+issues.innerHTML="Issues: "+d.issues.join(", ");
+cat.innerHTML="Categories: "+d.category.join(", ");
 
 fetch("/history")
 .then(r=>r.json())
