@@ -2,21 +2,58 @@
 <html>
 <head>
     <title>Scan Result</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
+
 <body>
 
-    <h1>🔍 Scan Results</h1>
+<h1>🔍 Scan Results</h1>
 
-    <h3>Code:</h3>
-    <pre>{{ code }}</pre>
+<h3>Code:</h3>
+<pre>{{ code }}</pre>
 
-    <h3>Rule-Based Result: {{ rule_result }}</h3>
-    <h3>ML Prediction: {{ ml_result }}</h3>
+<h3>Rule-Based Result: {{ rule_result }}</h3>
+<h3>ML Prediction: {{ ml_result }}</h3>
 
-    <h2>🚨 Final Result: {{ final_result }}</h2>
+<h2>🚨 Final Result: {{ final_result }}</h2>
 
-    <br>
-    <a href="/">Scan Another</a>
+<h2>🔥 Risk Score: {{ risk_score }}/100</h2>
+
+<!-- GRAPH -->
+<canvas id="riskChart" width="200" height="200"></canvas>
+<script>
+const riskScore = ("{{ risk_score }}");
+const safeScore = 100 - riskScore;
+
+const ctx = document.getElementById('riskChart').getContext('2d');
+
+new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+        labels: ['Risk', 'Safe'],
+        datasets: [{
+            data: [riskScore, safeScore],
+            backgroundColor: ['red', 'green']
+        }]
+    }
+});
+</script>
+
+<!-- EXPLANATION -->
+<h3>🧠 Detected Issues:</h3>
+
+{% if explanations %}
+<ul>
+    {% for issue in explanations %}
+        <li>{{ issue }}</li>
+    {% endfor %}
+</ul>
+{% else %}
+<p>No issues detected</p>
+{% endif %}
+
+<br>
+<a href="/">🔙 Scan Again</a>
 
 </body>
 </html>
