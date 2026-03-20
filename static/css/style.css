@@ -1,32 +1,86 @@
 body {
-    background: black;
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #020617, #0f172a);
     color: #00ffcc;
-    font-family: monospace;
-    text-align: center;
 }
 
+/* Center container */
+.container {
+    max-width: 1100px;
+    margin: auto;
+    padding: 20px;
+}
+
+/* Glass cards */
+.card {
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(15px);
+    border-radius: 15px;
+    padding: 20px;
+    margin: 20px 0;
+    box-shadow: 0 0 20px rgba(0,255,204,0.1);
+    transition: 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0 25px rgba(0,255,204,0.3);
+}
+
+/* Glow title */
 .glow {
-    animation: glow 1s infinite alternate;
+    text-align: center;
+    font-size: 2.5rem;
+    animation: glow 1.5s infinite alternate;
 }
 
 @keyframes glow {
-    from { text-shadow: 0 0 5px #00ffcc; }
-    to { text-shadow: 0 0 20px #00ffcc; }
+    from { text-shadow: 0 0 10px #00ffcc; }
+    to { text-shadow: 0 0 25px #00ffcc; }
 }
 
-textarea {
-    width: 500px;
-    height: 200px;
-    background: black;
-    color: #00ffcc;
-    border: 2px solid #00ffcc;
-}
-
+/* Buttons */
 button {
-    background: #00ffcc;
-    color: black;
-    padding: 10px;
-    margin: 5px;
+    background: linear-gradient(45deg, #00ffcc, #00ffaa);
     border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
     cursor: pointer;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+button:hover {
+    transform: scale(1.05);
+}
+
+/* Textarea */
+textarea {
+    width: 100%;
+    height: 200px;
+    background: #020617;
+    color: #00ffcc;
+    border: 1px solid #00ffcc;
+    border-radius: 8px;
+    padding: 10px;
+}
+
+/* Grid layout */
+.grid {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+/* Chart box */
+.chart-box {
+    width: 320px;
+    height: 320px;
+}
+
+/* Links */
+a {
+    color: #00ffcc;
 }

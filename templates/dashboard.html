@@ -5,39 +5,13 @@
 
 <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<style>
-.container {
-    max-width: 1000px;
-    margin: auto;
-}
-
-.card {
-    background: #0f172a;
-    padding: 20px;
-    margin: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px #00ffcc33;
-}
-
-.grid {
-    display: flex;
-    justify-content: space-around;
-    flex-wrap: wrap;
-}
-
-.chart-box {
-    width: 300px;
-    height: 300px;
-}
-</style>
 </head>
 
 <body>
 
 <div class="container">
 
-<h1 class="glow">📊 Scan Dashboard</h1>
+<h1 class="glow">⚡ AI Security Dashboard</h1>
 
 <div class="card">
     <h2>{{ result }}</h2>
@@ -58,9 +32,10 @@
 
 </div>
 
-<br>
-<a href="/">🔁 Scan Again</a> |
-<a href="/logout">Logout</a>
+<div class="card">
+    <a href="/">🔁 Scan Again</a> |
+    <a href="/logout">Logout</a>
+</div>
 
 </div>
 
@@ -69,7 +44,6 @@ const risk = parseInt("{{ risk_score }}");
 const safe = 100 - risk;
 const confidence = parseInt("{{ confidence }}");
 
-// Risk chart
 new Chart(document.getElementById("riskChart"), {
     type: 'doughnut',
     data: {
@@ -86,7 +60,6 @@ new Chart(document.getElementById("riskChart"), {
     }
 });
 
-// Confidence chart
 new Chart(document.getElementById("confidenceChart"), {
     type: 'bar',
     data: {
@@ -98,12 +71,8 @@ new Chart(document.getElementById("confidenceChart"), {
     },
     options: {
         scales: {
-            y: {
-                ticks: { color: "#00ffcc" }
-            },
-            x: {
-                ticks: { color: "#00ffcc" }
-            }
+            y: { ticks: { color: "#00ffcc" } },
+            x: { ticks: { color: "#00ffcc" } }
         }
     }
 });
