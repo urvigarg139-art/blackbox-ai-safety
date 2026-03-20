@@ -1,28 +1,41 @@
 import csv
+import random
+
+safe_code = [
+    "print('Hello World')",
+    "SELECT * FROM users WHERE id=1",
+    "if(x > 5){ return x; }",
+    "def add(a,b): return a+b",
+    "console.log('safe code')",
+    "for i in range(10): print(i)",
+    "let x = 10;",
+    "user = input('Enter name')",
+    "SELECT name FROM products",
+]
+
+vulnerable_code = [
+    "SELECT * FROM users WHERE id=1 OR 1=1",
+    "SELECT * FROM users WHERE username='' OR '1'='1'",
+    "<script>alert('XSS')</script>",
+    "<img src=x onerror=alert(1)>",
+    "eval(input())",
+    "exec(user_input)",
+    "password = '123456'",
+    "os.system(user_input)",
+    "SELECT * FROM users WHERE name = '" + "' + user_input + '",
+]
 
 data = []
 
-# SQL Injection examples
-for i in range(300):
-    code = f"query = 'SELECT * FROM users WHERE id=' + user_input_{i}"
-    data.append([code, "sql_injection"])
+# generate samples
+for _ in range(500):
+    data.append([random.choice(safe_code), 0])
+    data.append([random.choice(vulnerable_code), 1])
 
-# XSS examples
-for i in range(300):
-    code = f"<script>alert('XSS{i}')</script>"
-    data.append([code, "xss"])
+# shuffle
+random.shuffle(data)
 
-# Hardcoded secrets
-for i in range(300):
-    code = f"password = 'admin{i}'"
-    data.append([code, "hardcoded_secret"])
-
-# Safe code
-for i in range(300):
-    code = f"cursor.execute('SELECT * FROM users WHERE id=%s', (id_{i},))"
-    data.append([code, "safe"])
-
-# Save dataset
+# save
 with open("dataset.csv", "w", newline="", encoding="utf-8") as f:
     writer = csv.writer(f)
     writer.writerow(["code", "label"])

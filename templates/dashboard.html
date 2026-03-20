@@ -1,5 +1,22 @@
-<h1>Dashboard</h1>
-<p>Total scans: 23</p>
-<p>High Risk: 5</p>
-<p>Low Risk: 18</p>
-<a href="/">Back</a>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Scan Result</title>
+</head>
+<body>
+
+    <h1>🔍 Scan Results</h1>
+
+    <h3>Code:</h3>
+    <pre>{{ code }}</pre>
+
+    <h3>Rule-Based Result: {{ rule_result }}</h3>
+    <h3>ML Prediction: {{ ml_result }}</h3>
+
+    <h2>🚨 Final Result: {{ final_result }}</h2>
+
+    <br>
+    <a href="/">Scan Another</a>
+
+</body>
+</html>

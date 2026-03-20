@@ -1,71 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<title>BlackBox Cyber SaaS</title>
-
-<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+    <title>AI Code Security Scanner</title>
 </head>
-
 <body>
 
-<header>
-<div class="logo">🛡 BlackBox AI</div>
-<div class="status" id="status">Idle</div>
-<a href="/logout" class="logout">Logout</a>
-</header>
+    <h1>🔐 AI Code Vulnerability Scanner</h1>
 
-<section class="hero">
-<h1>Find <span>Vulnerabilities</span><br>Before Hackers Do</h1>
-<p>Paste your code and let BlackBox detect security threats instantly.</p>
-</section>
-
-<div class="main">
-
-<!-- LEFT PANEL -->
-<div class="left">
-
-<div class="editor">
-<div class="bar">source-code.ts</div>
-<textarea id="code" placeholder="// Paste your code here"></textarea>
-</div>
-
-<div class="actions">
-<button onclick="loadExample()">Load Example</button>
-<button class="primary" onclick="scan()">Run Scan</button>
-</div>
-
-</div>
-
-<!-- RIGHT PANEL -->
-<div class="right">
-
-<div class="scorebox">
-
-<div class="score-ring">
-<canvas id="chart"></canvas>
-<div id="scoreText">0</div>
-</div>
-
-<div class="sev">
-<div><span id="critical">0</span> CRITICAL</div>
-<div><span id="high">0</span> HIGH</div>
-<div><span id="medium">0</span> MEDIUM</div>
-<div><span id="low">0</span> LOW</div>
-</div>
-
-</div>
-
-<div id="issues"></div>
-<div id="history"></div>
-
-</div>
-
-</div>
-
-<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    <form action="/scan" method="POST">
+        <textarea name="code" rows="10" cols="60" placeholder="Paste your code here..."></textarea>
+        <br><br>
+        <button type="submit">Scan Code</button>
+    </form>
 
 </body>
 </html>
