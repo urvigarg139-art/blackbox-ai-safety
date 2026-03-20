@@ -5,11 +5,11 @@ import joblib
 app = Flask(__name__)
 app.secret_key = "supersecretkey"
 
-# Load ML model
+# Load ML
 model = joblib.load("model.pkl")
 vectorizer = joblib.load("vector.pkl")
 
-# ---------- DATABASE INIT ----------
+# ---------- DB ----------
 def init_db():
     conn = sqlite3.connect("users.db")
     cur = conn.cursor()
@@ -18,6 +18,11 @@ def init_db():
     conn.close()
 
 init_db()
+
+# ---------- LANDING ----------
+@app.route("/")
+def landing():
+    return render_template("landing.html")
 
 # ---------- LOGIN ----------
 @app.route("/login", methods=["GET", "POST"])
@@ -34,7 +39,7 @@ def login():
 
         if result:
             session["user"] = user
-            return redirect("/")
+            return redirect("/app")
         else:
             return "❌ Invalid login"
 
@@ -53,9 +58,8 @@ def signup():
         conn.commit()
         conn.close()
 
-        # auto login after signup
         session["user"] = user
-        return redirect("/")   # ✅ FIXED
+        return redirect("/app")
 
     return render_template("signup.html")
 
@@ -63,10 +67,10 @@ def signup():
 @app.route("/logout")
 def logout():
     session.clear()
-    return redirect("/login")
+    return redirect("/")
 
-# ---------- HOME ----------
-@app.route("/")
+# ---------- APP ----------
+@app.route("/app")
 def home():
     if "user" not in session:
         return redirect("/login")

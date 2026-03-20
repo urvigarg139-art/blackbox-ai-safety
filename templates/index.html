@@ -1,3 +1,11 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
 <div class="container">
 
 <h1 class="glow">⚡ AI Vulnerability Scanner</h1>
@@ -12,6 +20,16 @@
 </div>
 
 </div>
+
+<script>
+function loadExample(){
+document.querySelector("textarea").value =
+"SELECT * FROM users WHERE username='admin' OR '1'='1'";
+}
+</script>
+
+</body>
+</html>
 
 
 
