@@ -1,25 +1,75 @@
 <!DOCTYPE html>
 <html>
 <head>
+<title>Dashboard</title>
+
 <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+.container {
+    max-width: 1000px;
+    margin: auto;
+}
+
+.card {
+    background: #0f172a;
+    padding: 20px;
+    margin: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px #00ffcc33;
+}
+
+.grid {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+}
+
+.chart-box {
+    width: 300px;
+    height: 300px;
+}
+</style>
 </head>
 
 <body>
 
-<h2>{{ result }}</h2>
-<p>Risk: {{ risk_score }}%</p>
-<p>Confidence: {{ confidence }}%</p>
-<p>{{ explanation }}</p>
+<div class="container">
 
-<canvas id="riskChart"></canvas>
-<canvas id="confidenceChart"></canvas>
+<h1 class="glow">📊 Scan Dashboard</h1>
+
+<div class="card">
+    <h2>{{ result }}</h2>
+    <p>🔥 Risk Score: <b>{{ risk_score }}%</b></p>
+    <p>📊 Confidence: <b>{{ confidence }}%</b></p>
+    <p>🧠 {{ explanation }}</p>
+</div>
+
+<div class="grid">
+
+    <div class="card chart-box">
+        <canvas id="riskChart"></canvas>
+    </div>
+
+    <div class="card chart-box">
+        <canvas id="confidenceChart"></canvas>
+    </div>
+
+</div>
+
+<br>
+<a href="/">🔁 Scan Again</a> |
+<a href="/logout">Logout</a>
+
+</div>
 
 <script>
 const risk = parseInt("{{ risk_score }}");
 const safe = 100 - risk;
 const confidence = parseInt("{{ confidence }}");
 
+// Risk chart
 new Chart(document.getElementById("riskChart"), {
     type: 'doughnut',
     data: {
@@ -28,9 +78,15 @@ new Chart(document.getElementById("riskChart"), {
             data: [risk, safe],
             backgroundColor: ['#ff004c','#00ffcc']
         }]
+    },
+    options: {
+        plugins: {
+            legend: { labels: { color: "#00ffcc" } }
+        }
     }
 });
 
+// Confidence chart
 new Chart(document.getElementById("confidenceChart"), {
     type: 'bar',
     data: {
@@ -39,12 +95,19 @@ new Chart(document.getElementById("confidenceChart"), {
             data: [confidence],
             backgroundColor: '#00ffcc'
         }]
+    },
+    options: {
+        scales: {
+            y: {
+                ticks: { color: "#00ffcc" }
+            },
+            x: {
+                ticks: { color: "#00ffcc" }
+            }
+        }
     }
 });
 </script>
-
-<a href="/">🔁 Scan Again</a> |
-<a href="/logout">Logout</a>
 
 </body>
 </html>
