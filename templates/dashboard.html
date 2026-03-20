@@ -1,39 +1,48 @@
-<!DOCTYPE html>
-<html>
 <head>
-    <title>Results</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
-    <h1>📊 Scan Result</h1>
 
-    <p><b>Result:</b> {{ result }}</p>
-    <p><b>Risk Score:</b> {{ risk_score }}%</p>
-    <p><b>Explanation:</b> {{ explanation }}</p>
+<h2>{{ result }}</h2>
+<p>Risk: {{ risk_score }}%</p>
+<p>Confidence: {{ confidence }}%</p>
+<p>{{ explanation }}</p>
 
-    <canvas id="riskChart"></canvas>
+<canvas id="riskChart"></canvas>
+<canvas id="confidenceChart"></canvas>
 
-    <script>
-    const riskScore = parseInt("{{ risk_score }}");
-    const safeScore = 100 - riskScore;
+<script>
+const risk = parseInt("{{ risk_score }}");
+const safe = 100 - risk;
+const confidence = parseInt("{{ confidence }}");
 
-    const ctx = document.getElementById('riskChart').getContext('2d');
+// Risk chart
+new Chart(document.getElementById("riskChart"), {
+    type: 'doughnut',
+    data: {
+        labels: ['Risk','Safe'],
+        datasets: [{
+            data: [risk, safe],
+            backgroundColor: ['#ff004c','#00ffcc']
+        }]
+    }
+});
 
-    new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-            labels: ['Risk', 'Safe'],
-            datasets: [{
-                data: [riskScore, safeScore],
-                backgroundColor: ['#ff004c', '#00ffcc']
-            }]
-        }
-    });
-    </script>
+// Confidence chart
+new Chart(document.getElementById("confidenceChart"), {
+    type: 'bar',
+    data: {
+        labels: ['Confidence'],
+        datasets: [{
+            data: [confidence],
+            backgroundColor: '#00ffcc'
+        }]
+    }
+});
+</script>
 
-    <br>
-    <a href="/">🔁 Scan Again</a>
+<a href="/">Scan Again</a>
+
 </body>
-</html>

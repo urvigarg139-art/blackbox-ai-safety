@@ -1,38 +1,32 @@
 body {
-    background-color: #020617;
+    background: black;
     color: #00ffcc;
-    font-family: 'Courier New', monospace;
+    font-family: monospace;
     text-align: center;
 }
 
-h1 {
-    color: #00ffcc;
+/* Glow animation */
+.glow {
+    animation: glow 1s infinite alternate;
+}
+
+@keyframes glow {
+    from { text-shadow: 0 0 5px #00ffcc; }
+    to { text-shadow: 0 0 20px #00ffcc; }
 }
 
 textarea {
     width: 500px;
     height: 200px;
-    background: #020617;
+    background: black;
     color: #00ffcc;
     border: 2px solid #00ffcc;
-    padding: 10px;
 }
 
 button {
     background: #00ffcc;
     color: black;
     padding: 10px;
-    border: none;
     margin: 5px;
-    cursor: pointer;
-    font-weight: bold;
-}
-
-button:hover {
-    background: #00ffaa;
-}
-
-canvas {
-    margin-top: 20px;
-    max-width: 400px;
+    border: none;
 }

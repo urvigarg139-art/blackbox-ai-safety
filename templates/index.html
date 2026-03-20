@@ -1,28 +1,25 @@
-<!DOCTYPE html>
-<html>
 <head>
-    <title>AI Scanner</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 
 <body>
-    <h1>🔐 AI Code Vulnerability Scanner</h1>
+<h1 class="glow">⚡ AI Vulnerability Scanner</h1>
 
-    <form action="/scan" method="POST">
-        <textarea name="code" placeholder="Paste your code here..."></textarea><br>
+<form action="/scan" method="POST">
+<textarea name="code"></textarea><br>
 
-        <button type="submit">Scan</button>
-        <button type="button" onclick="loadExample()">Load Example</button>
-    </form>
+<button>Scan</button>
+<button type="button" onclick="loadExample()">Example</button>
+</form>
 
-    <script>
-    function loadExample() {
-        document.querySelector("textarea").value =
-        "SELECT * FROM users WHERE username = 'admin' OR '1'='1';";
-    }
-    </script>
+<script>
+function loadExample(){
+document.querySelector("textarea").value =
+"SELECT * FROM users WHERE id='1 OR 1=1'";
+}
+</script>
+
 </body>
-</html>
 
 
 
