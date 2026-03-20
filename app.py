@@ -31,6 +31,22 @@ def login():
             return "Invalid login"
 
     return render_template("login.html")
+@app.route("/signup", methods=["GET","POST"])
+def signup():
+    if request.method == "POST":
+        user = request.form["username"]
+        pwd = request.form["password"]
+
+        conn = sqlite3.connect("users.db")
+        cur = conn.cursor()
+
+        cur.execute("INSERT INTO users VALUES (?,?)", (user, pwd))
+        conn.commit()
+        conn.close()
+
+        return redirect("/login")
+
+    return render_template("signup.html")
 
 @app.route("/logout")
 def logout():
