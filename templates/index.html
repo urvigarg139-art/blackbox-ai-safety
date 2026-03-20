@@ -16,6 +16,17 @@
 
 <button>Scan</button>
 <button type="button" onclick="loadExample()">Example</button>
+<!-- 🤖 CHATBOT SECTION (NEW) -->
+<div class="card" style="margin-top:30px;">
+
+<h2>🤖 AI Security Assistant</h2>
+
+<div id="chatArea" class="chat-area"></div>
+
+<input id="chatInput" placeholder="Ask about your code..." />
+<button onclick="sendMessage()">Send</button>
+
+</div>
 </form>
 </div>
 
@@ -25,6 +36,26 @@
 function loadExample(){
 document.querySelector("textarea").value =
 "SELECT * FROM users WHERE username='admin' OR '1'='1'";
+}
+</script>
+<script>
+function sendMessage(){
+    const msg = document.getElementById("chatInput").value;
+    const code = document.querySelector("textarea").value;
+
+    const chat = document.getElementById("chatArea");
+
+    chat.innerHTML += `<div class="user">👤 ${msg}</div>`;
+
+    fetch("/chat", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({message: msg, code: code})
+    })
+    .then(res => res.json())
+    .then(data => {
+        chat.innerHTML += `<div class="bot">🤖 ${data.reply}</div>`;
+    });
 }
 </script>
 

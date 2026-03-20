@@ -1,3 +1,7 @@
+import os
+from openai import OpenAI
+
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 from flask import Flask, render_template, request, redirect, session, jsonify
 import sqlite3
 import joblib
@@ -120,3 +124,34 @@ def api_scan():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
+@app.route("/chat", methods=["POST"])
+def chat():
+    data = request.json
+    code = data.get("code", "")
+    message = data.get("message", "")
+
+    prompt = f"""
+You are a cybersecurity expert AI assistant.
+
+Code:
+{code}
+
+User question:
+{message}
+
+Respond clearly:
+- Is it vulnerable?
+- Why?
+- Fix it
+- Give corrected code
+"""
+
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[{"role": "user", "content": prompt}]
+    )
+
+    return jsonify({
+        "reply": response.choices[0].message.content
+    })
