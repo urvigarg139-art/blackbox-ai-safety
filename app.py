@@ -1,37 +1,47 @@
 from flask import Flask, render_template, request, redirect, session, jsonify
-import joblib
 import sqlite3
+import joblib
 
 app = Flask(__name__)
-app.secret_key = "secret123"
+app.secret_key = "supersecretkey"
 
-# Load ML
+# Load ML model
 model = joblib.load("model.pkl")
 vectorizer = joblib.load("vector.pkl")
 
-# ---------------- LOGIN ----------------
-def get_user(username, password):
+# ---------- DATABASE INIT ----------
+def init_db():
     conn = sqlite3.connect("users.db")
     cur = conn.cursor()
-    cur.execute("SELECT * FROM users WHERE username=? AND password=?", (username, password))
-    user = cur.fetchone()
+    cur.execute("CREATE TABLE IF NOT EXISTS users (username TEXT, password TEXT)")
+    conn.commit()
     conn.close()
-    return user
 
-@app.route("/login", methods=["GET","POST"])
+init_db()
+
+# ---------- LOGIN ----------
+@app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
         user = request.form["username"]
         pwd = request.form["password"]
 
-        if get_user(user, pwd):
+        conn = sqlite3.connect("users.db")
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM users WHERE username=? AND password=?", (user, pwd))
+        result = cur.fetchone()
+        conn.close()
+
+        if result:
             session["user"] = user
             return redirect("/")
         else:
-            return "Invalid login"
+            return "❌ Invalid login"
 
     return render_template("login.html")
-@app.route("/signup", methods=["GET","POST"])
+
+# ---------- SIGNUP ----------
+@app.route("/signup", methods=["GET", "POST"])
 def signup():
     if request.method == "POST":
         user = request.form["username"]
@@ -39,30 +49,35 @@ def signup():
 
         conn = sqlite3.connect("users.db")
         cur = conn.cursor()
-
-        cur.execute("INSERT INTO users VALUES (?,?)", (user, pwd))
+        cur.execute("INSERT INTO users VALUES (?, ?)", (user, pwd))
         conn.commit()
         conn.close()
 
-        return redirect("/login")
+        # auto login after signup
+        session["user"] = user
+        return redirect("/")   # ✅ FIXED
 
     return render_template("signup.html")
 
+# ---------- LOGOUT ----------
 @app.route("/logout")
 def logout():
     session.clear()
     return redirect("/login")
 
-# ---------------- HOME ----------------
+# ---------- HOME ----------
 @app.route("/")
 def home():
     if "user" not in session:
         return redirect("/login")
     return render_template("index.html")
 
-# ---------------- SCAN ----------------
+# ---------- SCAN ----------
 @app.route("/scan", methods=["POST"])
 def scan():
+    if "user" not in session:
+        return redirect("/login")
+
     code = request.form["code"]
 
     X = vectorizer.transform([code])
@@ -77,14 +92,13 @@ def scan():
 
     return render_template(
         "dashboard.html",
-        code=code,
         result=result,
         risk_score=risk_score,
         confidence=confidence,
         explanation=explanation
     )
 
-# ---------------- PUBLIC API ----------------
+# ---------- API ----------
 @app.route("/api/scan", methods=["POST"])
 def api_scan():
     data = request.json

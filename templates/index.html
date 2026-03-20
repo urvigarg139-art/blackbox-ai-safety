@@ -1,12 +1,15 @@
+<!DOCTYPE html>
+<html>
 <head>
 <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 
 <body>
+
 <h1 class="glow">⚡ AI Vulnerability Scanner</h1>
 
 <form action="/scan" method="POST">
-<textarea name="code"></textarea><br>
+<textarea name="code" placeholder="Paste code..."></textarea><br>
 
 <button>Scan</button>
 <button type="button" onclick="loadExample()">Example</button>
@@ -15,12 +18,12 @@
 <script>
 function loadExample(){
 document.querySelector("textarea").value =
-"SELECT * FROM users WHERE id='1 OR 1=1'";
+"SELECT * FROM users WHERE username='admin' OR '1'='1'";
 }
 </script>
 
 </body>
-
+</html>
 
 
 

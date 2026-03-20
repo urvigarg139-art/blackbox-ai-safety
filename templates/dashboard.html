@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+<html>
 <head>
 <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -18,7 +20,6 @@ const risk = parseInt("{{ risk_score }}");
 const safe = 100 - risk;
 const confidence = parseInt("{{ confidence }}");
 
-// Risk chart
 new Chart(document.getElementById("riskChart"), {
     type: 'doughnut',
     data: {
@@ -30,7 +31,6 @@ new Chart(document.getElementById("riskChart"), {
     }
 });
 
-// Confidence chart
 new Chart(document.getElementById("confidenceChart"), {
     type: 'bar',
     data: {
@@ -43,6 +43,8 @@ new Chart(document.getElementById("confidenceChart"), {
 });
 </script>
 
-<a href="/">Scan Again</a>
+<a href="/">🔁 Scan Again</a> |
+<a href="/logout">Logout</a>
 
 </body>
+</html>
