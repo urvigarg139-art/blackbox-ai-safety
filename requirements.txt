@@ -1,11 +1,8 @@
-flask==3.0.3
-gunicorn==21.2.0
-openai==1.29.0
-
-numpy==2.0.0
-scikit-learn==1.4.2
-joblib==1.4.2
-pandas==2.2.2
+flask
+gunicorn
+openai
+numpy
+pandas
 
 
 
