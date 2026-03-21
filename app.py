@@ -1,17 +1,25 @@
 import os
-from openai import OpenAI
-
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 from flask import Flask, render_template, request, redirect, session, jsonify
 import sqlite3
 import joblib
+from openai import OpenAI
 
+# ---------- CONFIG ----------
 app = Flask(__name__)
-app.secret_key = "supersecretkey"
+app.secret_key = os.getenv("SECRET_KEY", "fallback-secret")
 
-# Load ML
-model = joblib.load("model.pkl")
-vectorizer = joblib.load("vector.pkl")
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
+# ---------- LOAD ML SAFELY ----------
+try:
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    model = joblib.load(os.path.join(BASE_DIR, "model.pkl"))
+    vectorizer = joblib.load(os.path.join(BASE_DIR, "vector.pkl"))
+    print("✅ Model loaded successfully")
+except Exception as e:
+    print("❌ Model loading failed:", e)
+    model = None
+    vectorizer = None
 
 # ---------- DB ----------
 def init_db():
@@ -23,12 +31,13 @@ def init_db():
 
 init_db()
 
-# ---------- LANDING ----------
+# ---------- ROUTES ----------
+
 @app.route("/")
 def landing():
     return render_template("landing.html")
 
-# ---------- LOGIN ----------
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
@@ -49,7 +58,7 @@ def login():
 
     return render_template("login.html")
 
-# ---------- SIGNUP ----------
+
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
     if request.method == "POST":
@@ -67,24 +76,28 @@ def signup():
 
     return render_template("signup.html")
 
-# ---------- LOGOUT ----------
+
 @app.route("/logout")
 def logout():
     session.clear()
     return redirect("/")
 
-# ---------- APP ----------
+
 @app.route("/app")
 def home():
     if "user" not in session:
         return redirect("/login")
     return render_template("index.html")
 
+
 # ---------- SCAN ----------
 @app.route("/scan", methods=["POST"])
 def scan():
     if "user" not in session:
         return redirect("/login")
+
+    if model is None or vectorizer is None:
+        return "❌ Model not loaded"
 
     code = request.form["code"]
 
@@ -106,9 +119,13 @@ def scan():
         explanation=explanation
     )
 
+
 # ---------- API ----------
 @app.route("/api/scan", methods=["POST"])
 def api_scan():
+    if model is None or vectorizer is None:
+        return jsonify({"error": "Model not loaded"})
+
     data = request.json
     code = data.get("code", "")
 
@@ -122,9 +139,8 @@ def api_scan():
         "confidence": float(max(prob) * 100)
     })
 
-if __name__ == "__main__":
-    app.run(debug=True)
 
+# ---------- CHAT ----------
 @app.route("/chat", methods=["POST"])
 def chat():
     data = request.json
@@ -147,11 +163,21 @@ Respond clearly:
 - Give corrected code
 """
 
-    response = client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[{"role": "user", "content": prompt}]
-    )
+    try:
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[{"role": "user", "content": prompt}]
+        )
 
-    return jsonify({
-        "reply": response.choices[0].message.content
-    })
+        return jsonify({
+            "reply": response.choices[0].message.content
+        })
+
+    except Exception as e:
+        return jsonify({"error": str(e)})
+
+
+# ---------- RUN ----------
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)
