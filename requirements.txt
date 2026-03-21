@@ -3,6 +3,7 @@ gunicorn
 openai
 numpy
 pandas
+joblib
 
 
 
