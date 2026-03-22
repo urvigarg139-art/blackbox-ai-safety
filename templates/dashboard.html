@@ -1,9 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Dashboard</title>
-
-    <!-- FIXED PATH -->
+    <title>Security Analysis</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 
@@ -13,18 +11,45 @@
 
     <h1 class="title">📊 Security Analysis</h1>
 
-    <div class="card">
-        <h3>{{ result }}</h3>
-        <p>Risk: {{ risk }}%</p>
-        <p>Confidence: {{ confidence }}%</p>
+    <!-- RESULT CARD -->
+    <div class="card {% if result == 'Vulnerable' %}vulnerable{% else %}safe{% endif %}">
+        <h2>
+            {% if result == "Vulnerable" %}
+                ⚠️ Vulnerable
+            {% else %}
+                ✅ Safe
+            {% endif %}
+        </h2>
+
+        <!-- CIRCULAR PROGRESS -->
+        <div style="display:flex; gap:40px; justify-content:center;">
+            
+            <div>
+                <div class="progress-circle" style="--value: {{ risk }}%;">
+                    {{ risk }}%
+                </div>
+                <p style="text-align:center;">Risk</p>
+            </div>
+
+            <div>
+                <div class="progress-circle" style="--value: {{ confidence }}%;">
+                    {{ confidence }}%
+                </div>
+                <p style="text-align:center;">Confidence</p>
+            </div>
+
+        </div>
     </div>
 
+    <!-- CODE -->
     <div class="card">
-        <h3>Code</h3>
+        <h3>💻 Code</h3>
         <pre>{{ code }}</pre>
     </div>
 
+    <!-- GRAPH -->
     <div class="card">
+        <h3>📈 Analysis Graph</h3>
         <canvas id="chart"></canvas>
     </div>
 
@@ -41,8 +66,22 @@ new Chart(ctx, {
         labels: ['Risk', 'Confidence'],
         datasets: [{
             label: 'Analysis',
-            data: [("{{ risk }}"), ("{{ confidence }}")]
+            data: [("{{ risk }}"), ("{{ confidence }}")],
+            backgroundColor: ['#ef4444', '#22c55e']
         }]
+    },
+    options: {
+        plugins: {
+            legend: { labels: { color: "white" } }
+        },
+        scales: {
+            y: {
+                ticks: { color: "white" }
+            },
+            x: {
+                ticks: { color: "white" }
+            }
+        }
     }
 });
 </script>
