@@ -3,94 +3,52 @@
 <head>
     <title>AI Security Analyzer</title>
     <link rel="stylesheet" href="/static/css/style.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
 
-<div class="container">
+<div class="app">
 
-    <!-- SIDEBAR -->
-    <div class="sidebar">
-        <h2>🛡️ SecureAI</h2>
-        <ul>
-            <li>📊 Dashboard</li>
-            <li>🔍 Scan</li>
-            <li>📁 History</li>
-            <li>⚙ Settings</li>
-        </ul>
+    <h1>🚀 AI Security Analyzer</h1>
+
+    <!-- INPUT -->
+    <div class="card">
+        <textarea id="code" placeholder="Paste your code here..."></textarea>
+
+        <div class="buttons">
+            <button id="exampleBtn">Load Example</button>
+            <button id="scanBtn">Scan</button>
+        </div>
     </div>
 
-    <!-- MAIN -->
-    <div class="main">
+    <!-- LOADING -->
+    <div id="loading" class="hidden">🤖 AI is analyzing...</div>
 
-        <h1>🚀 AI Security Analyzer</h1>
+    <!-- RESULT -->
+    <div id="result" class="hidden">
 
-        <!-- INPUT -->
         <div class="card">
-            <textarea id="code" placeholder="Paste your code here..."></textarea>
-
-            <div class="btn-group">
-                <button onclick="loadExample()">Load Example</button>
-                <button onclick="scanCode()">Scan</button>
-            </div>
+            <h2 id="label"></h2>
+            <p>Risk: <span id="risk"></span>%</p>
+            <p>Confidence: <span id="confidence"></span>%</p>
         </div>
 
-        <!-- LOADING -->
-        <div id="loading" class="loading hidden">🤖 AI is analyzing...</div>
+        <div class="card">
+            <h3>🧠 Reason</h3>
+            <p id="reason"></p>
+        </div>
 
-        <!-- RESULT -->
-        <div id="result" class="hidden">
-
-            <!-- SUMMARY -->
-            <div class="grid">
-
-                <div class="card">
-                    <h3>⚠ Vulnerability</h3>
-                    <p id="label"></p>
-                </div>
-
-                <div class="card">
-                    <h3>📉 Risk</h3>
-                    <div class="progress">
-                        <div id="riskBar"></div>
-                    </div>
-                    <p id="risk"></p>
-                </div>
-
-                <div class="card">
-                    <h3>🎯 Confidence</h3>
-                    <div class="progress blue">
-                        <div id="confBar"></div>
-                    </div>
-                    <p id="confidence"></p>
-                </div>
-
-            </div>
-
-            <!-- CHART -->
-            <div class="card">
-                <canvas id="chart"></canvas>
-            </div>
-
-            <!-- EXPLANATION -->
-            <div class="card">
-                <h3>🧠 Why is this vulnerable?</h3>
-                <p id="reason"></p>
-            </div>
-
-            <!-- FIX -->
-            <div class="card">
-                <h3>🛠 Suggested Fix</h3>
-                <pre id="fix"></pre>
-            </div>
-
+        <div class="card">
+            <h3>🛠 Fix</h3>
+            <pre id="fix"></pre>
         </div>
 
     </div>
 
 </div>
 
+<!-- IMPORTANT -->
 <script src="/static/js/app.js"></script>
+
 </body>
 </html>

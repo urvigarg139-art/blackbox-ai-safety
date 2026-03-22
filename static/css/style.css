@@ -1,110 +1,50 @@
 body {
     margin: 0;
-    font-family: 'Segoe UI';
-    background: linear-gradient(135deg, #020024, #090979, #00d4ff);
+    font-family: Arial;
+    background: linear-gradient(135deg, #000428, #004e92);
     color: white;
 }
 
-.container {
-    display: flex;
-}
-
-/* SIDEBAR */
-.sidebar {
-    width: 220px;
-    height: 100vh;
-    background: rgba(0,0,0,0.5);
-    padding: 20px;
-}
-
-.sidebar h2 {
-    color: #00f7ff;
-}
-
-.sidebar ul {
-    list-style: none;
-    padding: 0;
-}
-
-.sidebar li {
-    padding: 10px;
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-.sidebar li:hover {
-    background: rgba(255,255,255,0.1);
-}
-
-/* MAIN */
-.main {
-    flex: 1;
+.app {
     padding: 40px;
 }
 
-/* CARD */
+h1 {
+    text-align: center;
+    color: cyan;
+}
+
 .card {
     background: rgba(255,255,255,0.08);
-    backdrop-filter: blur(10px);
     padding: 20px;
-    border-radius: 15px;
-    margin-bottom: 20px;
+    border-radius: 10px;
+    margin-top: 20px;
 }
 
-/* GRID */
-.grid {
-    display: flex;
-    gap: 20px;
-}
-
-/* TEXTAREA */
 textarea {
     width: 100%;
     height: 120px;
     background: black;
-    color: #00ffff;
-    border: none;
+    color: cyan;
     padding: 10px;
 }
 
-/* BUTTONS */
-.btn-group button {
+.buttons {
     margin-top: 10px;
-    margin-right: 10px;
+}
+
+button {
     padding: 10px 20px;
+    margin-right: 10px;
     border: none;
-    background: #00d4ff;
+    background: cyan;
     color: black;
     cursor: pointer;
-    border-radius: 8px;
+    border-radius: 6px;
 }
 
-.btn-group button:hover {
-    transform: scale(1.05);
-}
-
-/* PROGRESS */
-.progress {
-    width: 100%;
-    height: 10px;
-    background: gray;
-    border-radius: 10px;
-}
-
-.progress div {
-    height: 100%;
-    background: red;
-    border-radius: 10px;
-}
-
-.progress.blue div {
-    background: cyan;
-}
-
-/* LOADING */
-.loading {
-    text-align: center;
-    margin: 20px;
+button:hover {
+    background: #00ffff;
 }
 
 .hidden {
