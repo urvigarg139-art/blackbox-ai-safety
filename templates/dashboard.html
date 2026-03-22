@@ -3,14 +3,15 @@
 <head>
     <title>Dashboard</title>
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <!-- FIXED PATH -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 
 <body>
 
-<div class="container">
+<div class="main-container">
 
-    <h1>📊 Analysis Dashboard</h1>
+    <h1 class="title">📊 Security Analysis</h1>
 
     <div class="card">
         <h3>{{ result }}</h3>
@@ -20,22 +21,31 @@
 
     <div class="card">
         <h3>Code</h3>
-        <pre id="codeDisplay">{{ code }}</pre>
+        <pre>{{ code }}</pre>
     </div>
 
-    <!-- CHAT -->
-    <div class="chat">
-        <h3>💬 Ask AI</h3>
-
-        <div id="chatBox"></div>
-
-        <input id="chatInput" placeholder="Ask about your code..." />
-        <button onclick="sendMessage()">Send</button>
+    <div class="card">
+        <canvas id="chart"></canvas>
     </div>
 
 </div>
 
-<script src="{{ url_for('static', filename='app.js') }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+const ctx = document.getElementById('chart');
+
+new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: ['Risk', 'Confidence'],
+        datasets: [{
+            label: 'Analysis',
+            data: [("{{ risk }}"), ("{{ confidence }}")]
+        }]
+    }
+});
+</script>
 
 </body>
 </html>

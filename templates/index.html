@@ -3,29 +3,31 @@
 <head>
     <title>AI Security Assistant</title>
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <!-- FIXED PATH -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 
 <body>
 
-<div class="container">
+<div class="main-container">
 
-    <h1>🤖 AI Security Assistant</h1>
+    <h1 class="title">🤖 AI Security Assistant</h1>
 
     <form action="/scan" method="POST">
 
         <textarea id="codeInput" name="code" placeholder="Paste your code here..." required></textarea>
 
-        <div class="buttons">
-            <button type="button" onclick="loadExample()">Load Example</button>
-            <button type="submit">Scan</button>
-        </div>
+        <br><br>
+
+        <button type="button" onclick="loadExample()">Load Example</button>
+        <button type="submit">Scan</button>
 
     </form>
 
 </div>
 
-<script src="{{ url_for('static', filename='app.js') }}"></script>
+<!-- FIXED PATH -->
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
 
 </body>
 </html>
