@@ -1,11 +1,13 @@
 import os
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, redirect, session
+import sqlite3
 import joblib
 import google.generativeai as genai
 
 app = Flask(__name__)
+app.secret_key = "supersecretkey"
 
-# ---------- LOAD MODEL ----------
+# ----------- LOAD MODEL -----------
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 try:
@@ -17,84 +19,147 @@ except Exception as e:
     model = None
     vectorizer = None
 
-# ---------- GEMINI SETUP ----------
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+# ----------- GEMINI SETUP -----------
+api_key = os.getenv("GEMINI_API_KEY")
+
+if not api_key:
+    print("❌ GEMINI KEY NOT FOUND")
+else:
+    print("✅ GEMINI KEY LOADED")
+
+genai.configure(api_key=api_key)
 ai_model = genai.GenerativeModel("gemini-1.5-flash")
 
-# ---------- HOME ----------
+# ----------- DB -----------
+def init_db():
+    conn = sqlite3.connect("users.db")
+    cur = conn.cursor()
+    cur.execute("CREATE TABLE IF NOT EXISTS users (username TEXT, password TEXT)")
+    conn.commit()
+    conn.close()
+
+init_db()
+
+# ----------- ROUTES -----------
+
 @app.route("/")
+def landing():
+    return render_template("landing.html")
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        user = request.form["username"]
+        pwd = request.form["password"]
+
+        conn = sqlite3.connect("users.db")
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM users WHERE username=? AND password=?", (user, pwd))
+        result = cur.fetchone()
+        conn.close()
+
+        if result:
+            session["user"] = user
+            return redirect("/app")
+        else:
+            return "❌ Invalid login"
+
+    return render_template("login.html")
+
+@app.route("/signup", methods=["GET", "POST"])
+def signup():
+    if request.method == "POST":
+        user = request.form["username"]
+        pwd = request.form["password"]
+
+        conn = sqlite3.connect("users.db")
+        cur = conn.cursor()
+        cur.execute("INSERT INTO users VALUES (?, ?)", (user, pwd))
+        conn.commit()
+        conn.close()
+
+        session["user"] = user
+        return redirect("/app")
+
+    return render_template("signup.html")
+
+@app.route("/app")
 def home():
+    if "user" not in session:
+        return redirect("/login")
     return render_template("index.html")
 
-# ---------- SCAN ----------
+# ----------- SCAN -----------
+
 @app.route("/scan", methods=["POST"])
 def scan():
-    data = request.json
-    code = data.get("code", "")
+    if "user" not in session:
+        return redirect("/login")
+
+    code = request.form["code"]
 
     if model is None or vectorizer is None:
-        return jsonify({"error": "Model not loaded"})
+        return render_template("dashboard.html",
+                               result="❌ Model not loaded",
+                               risk_score=0,
+                               confidence=0,
+                               explanation="Model missing")
 
     X = vectorizer.transform([code])
     pred = model.predict(X)[0]
     prob = model.predict_proba(X)[0]
 
-    return jsonify({
-        "prediction": int(pred),
-        "risk": float(prob[1] * 100),
-        "confidence": float(max(prob) * 100)
-    })
+    risk_score = int(prob[1] * 100)
+    confidence = int(max(prob) * 100)
 
-# ---------- CHAT (ML + GEMINI) ----------
+    result = "⚠️ Vulnerable" if pred == 1 else "✅ Safe"
+    explanation = "SQL Injection detected" if pred == 1 else "No issues found"
+
+    return render_template("dashboard.html",
+                           code=code,
+                           result=result,
+                           risk_score=risk_score,
+                           confidence=confidence,
+                           explanation=explanation)
+
+# ----------- CHAT (GEMINI) -----------
+
 @app.route("/chat", methods=["POST"])
 def chat():
-    data = request.json
-    code = data.get("code", "")
-    message = data.get("message", "")
-
     try:
-        # ML Prediction
-        X = vectorizer.transform([code])
-        pred = model.predict(X)[0]
-        prob = model.predict_proba(X)[0]
+        data = request.json
+        message = data.get("message", "")
+        code = data.get("code", "")
 
-        label = "Vulnerable" if pred == 1 else "Safe"
-        risk = int(prob[1] * 100)
-
-        # Prompt for Gemini
         prompt = f"""
-You are a cybersecurity expert AI.
+You are a cybersecurity expert.
 
 Code:
 {code}
 
-ML Result:
-{label} ({risk}% risk)
-
 User question:
 {message}
 
-Explain:
-- Is it vulnerable?
-- Why?
-- Fix it
-- Give corrected code
+Answer clearly:
+- vulnerability
+- reason
+- fix
+- corrected code
 """
 
         response = ai_model.generate_content(prompt)
-        reply = response.text
 
         return jsonify({
-            "reply": reply,
-            "prediction": label,
-            "risk": risk
+            "reply": response.text
         })
 
     except Exception as e:
+        print("❌ Gemini error:", e)
         return jsonify({
-            "reply": "⚠️ AI unavailable. Please try again later."
+            "reply": "⚠️ AI unavailable. Try again."
         })
 
+# ----------- RUN -----------
+
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 10000))
-    app.run(host="0.0.0.0", port=port)
+    app.run(debug=True)
