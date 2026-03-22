@@ -1,87 +1,42 @@
-function loadExample() {
-    document.getElementById("codeInput").value =
-        "SELECT * FROM users WHERE id = '" + " + user_input + '";
-}
-
-let latestData = null;
-
 async function scanCode() {
+    let code = document.getElementById("code").value;
 
-    const code = document.getElementById("codeInput").value;
+    document.getElementById("loading").classList.remove("hidden");
+    document.getElementById("result").classList.add("hidden");
 
-    document.getElementById("loader").innerText = "🤖 AI analyzing...";
-
-    const res = await fetch("/scan", {
+    let res = await fetch("/scan", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({ code })
+        body: JSON.stringify({code: code})
     });
 
-    const data = await res.json();
-    latestData = data;
+    let data = await res.json();
 
-    document.getElementById("loader").innerText = "";
+    document.getElementById("loading").classList.add("hidden");
+    document.getElementById("result").classList.remove("hidden");
 
-    document.getElementById("resultBox").style.display = "block";
+    document.getElementById("label").innerText = data.label;
+    document.getElementById("risk").innerText = data.risk + "%";
+    document.getElementById("confidence").innerText = data.confidence + "%";
+    document.getElementById("reason").innerText = data.reason;
+    document.getElementById("fix").innerText = data.fix;
 
-    document.getElementById("resultText").innerText = data.result;
-    document.getElementById("risk").innerText = data.risk;
-    document.getElementById("confidence").innerText = data.confidence;
+    document.getElementById("riskBar").style.width = data.risk + "%";
+    document.getElementById("confBar").style.width = data.confidence + "%";
 
-    document.getElementById("highlighted").innerText = data.highlighted;
-
-    // vulnerabilities
-    const vulnList = document.getElementById("vulnList");
-    vulnList.innerHTML = "";
-    data.vulnerabilities.forEach(v => {
-        const li = document.createElement("li");
-        li.innerText = `${v[0]} (Line ${v[2]+1})`;
-        vulnList.appendChild(li);
-    });
-
-    // fixes
-    const fixList = document.getElementById("fixList");
-    fixList.innerHTML = "";
-    data.fixes.forEach(f => {
-        const li = document.createElement("li");
-        li.innerText = f;
-        fixList.appendChild(li);
-    });
-
-    renderChart(data.risk, data.confidence);
-}
-
-
-function renderChart(risk, confidence) {
-    const ctx = document.getElementById('chart');
-
-    if (window.myChart) window.myChart.destroy();
-
-    window.myChart = new Chart(ctx, {
-        type: 'bar',
+    new Chart(document.getElementById("chart"), {
+        type: "bar",
         data: {
-            labels: ['Risk', 'Confidence'],
+            labels: ["Risk", "Confidence"],
             datasets: [{
-                data: [risk, confidence],
-                backgroundColor: ['red', 'green']
+                label: "Analysis",
+                data: [data.risk, data.confidence]
             }]
         }
     });
 }
 
-
-async function downloadReport() {
-    const res = await fetch("/download", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify(latestData)
-    });
-
-    const blob = await res.blob();
-    const url = window.URL.createObjectURL(blob);
-
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "report.pdf";
-    a.click();
+function loadExample() {
+    document.getElementById("code").value =
+        "SELECT * FROM users WHERE id = ' + user_input + '";
 }

@@ -74,6 +74,13 @@ def scan():
         "vulnerabilities": vulnerabilities,
         "fixes": fixes
     })
+    return jsonify({
+    "label": "Vulnerable",
+    "risk": 80,
+    "confidence": 20,
+    "reason": "User input is directly concatenated → SQL Injection risk.",
+    "fix": "Use parameterized queries:\nSELECT * FROM users WHERE id = ?"
+})
 
 
 # ---------- PDF ----------

@@ -1,84 +1,96 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Security Analysis</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>AI Security Analyzer</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
 
-<div class="main-container">
+<div class="container">
 
-    <h1 class="title">🚀 AI Security Analyzer</h1>
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <h2>🛡️ SecureAI</h2>
+        <ul>
+            <li>📊 Dashboard</li>
+            <li>🔍 Scan</li>
+            <li>📁 History</li>
+            <li>⚙ Settings</li>
+        </ul>
+    </div>
 
-    <!-- RESULT -->
-    <div class="card {% if result == 'Vulnerable' %}vulnerable{% else %}safe{% endif %}">
-        
-        <h2 class="typing">
-            {% if result == "Vulnerable" %}
-                ⚠️ Vulnerability Detected
-            {% else %}
-                ✅ Code is Secure
-            {% endif %}
-        </h2>
+    <!-- MAIN -->
+    <div class="main">
 
-        <div style="display:flex; justify-content:center; gap:50px; margin-top:20px;">
+        <h1>🚀 AI Security Analyzer</h1>
 
-            <div>
-                <div class="progress-circle" style="--value: {{ risk }}%;">
-                    {{ risk }}%
+        <!-- INPUT -->
+        <div class="card">
+            <textarea id="code" placeholder="Paste your code here..."></textarea>
+
+            <div class="btn-group">
+                <button onclick="loadExample()">Load Example</button>
+                <button onclick="scanCode()">Scan</button>
+            </div>
+        </div>
+
+        <!-- LOADING -->
+        <div id="loading" class="loading hidden">🤖 AI is analyzing...</div>
+
+        <!-- RESULT -->
+        <div id="result" class="hidden">
+
+            <!-- SUMMARY -->
+            <div class="grid">
+
+                <div class="card">
+                    <h3>⚠ Vulnerability</h3>
+                    <p id="label"></p>
                 </div>
-                <p style="text-align:center;">Risk</p>
+
+                <div class="card">
+                    <h3>📉 Risk</h3>
+                    <div class="progress">
+                        <div id="riskBar"></div>
+                    </div>
+                    <p id="risk"></p>
+                </div>
+
+                <div class="card">
+                    <h3>🎯 Confidence</h3>
+                    <div class="progress blue">
+                        <div id="confBar"></div>
+                    </div>
+                    <p id="confidence"></p>
+                </div>
+
             </div>
 
-            <div>
-                <div class="progress-circle" style="--value: {{ confidence }}%;">
-                    {{ confidence }}%
-                </div>
-                <p style="text-align:center;">Confidence</p>
+            <!-- CHART -->
+            <div class="card">
+                <canvas id="chart"></canvas>
+            </div>
+
+            <!-- EXPLANATION -->
+            <div class="card">
+                <h3>🧠 Why is this vulnerable?</h3>
+                <p id="reason"></p>
+            </div>
+
+            <!-- FIX -->
+            <div class="card">
+                <h3>🛠 Suggested Fix</h3>
+                <pre id="fix"></pre>
             </div>
 
         </div>
-
-    </div>
-
-    <!-- CODE -->
-    <div class="card">
-        <h3>💻 Code</h3>
-        <pre>{{ code }}</pre>
-    </div>
-
-    <!-- GRAPH -->
-    <div class="card">
-        <h3>📊 Analysis</h3>
-        <canvas id="chart"></canvas>
-    </div>
-
-    <!-- AI SUGGESTION (FAKE BUT SMART 😎) -->
-    <div class="card">
-        <h3>🤖 AI Suggestions</h3>
-
-        {% if result == "Vulnerable" %}
-        <div class="ai-box">
-            🔴 Your code may be vulnerable to SQL Injection.<br><br>
-            ✅ Use parameterized queries instead of string concatenation.<br>
-            ✅ Validate user input properly.<br>
-            ✅ Avoid direct database string execution.
-        </div>
-        {% else %}
-        <div class="ai-box">
-            🟢 Your code looks secure.<br><br>
-            ✅ Good job using safe practices.<br>
-            ✅ Keep validating inputs and sanitizing data.
-        </div>
-        {% endif %}
 
     </div>
 
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="{{ url_for('static', filename='js/app.js') }}"></script>
-
+<script src="/static/js/app.js"></script>
 </body>
 </html>
