@@ -25,40 +25,55 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 def home():
     return render_template("index.html")
 
-# ---------- CHAT + ML ----------
+# ---------- SCAN (ML ONLY) ----------
+@app.route("/scan", methods=["POST"])
+def scan():
+    data = request.json
+    code = data.get("code", "")
+
+    if model is None or vectorizer is None:
+        return jsonify({"error": "Model not loaded"})
+
+    X = vectorizer.transform([code])
+    pred = model.predict(X)[0]
+    prob = model.predict_proba(X)[0]
+
+    return jsonify({
+        "prediction": int(pred),
+        "risk": float(prob[1] * 100),
+        "confidence": float(max(prob) * 100)
+    })
+
+# ---------- CHAT (ML + GPT) ----------
 @app.route("/chat", methods=["POST"])
 def chat():
     data = request.json
-    code = data.get("message", "")
-
-    if model is None or vectorizer is None:
-        return jsonify({"reply": "❌ Model not loaded"})
+    code = data.get("code", "")
+    message = data.get("message", "")
 
     try:
-        # ML Prediction
+        # ML
         X = vectorizer.transform([code])
         pred = model.predict(X)[0]
         prob = model.predict_proba(X)[0]
 
-        risk_score = int(prob[1] * 100)
         label = "Vulnerable" if pred == 1 else "Safe"
+        risk = int(prob[1] * 100)
 
-        # GPT Explanation
+        # GPT
         prompt = f"""
-You are a cybersecurity expert AI.
+You are a cybersecurity AI.
 
 Code:
 {code}
 
 ML Result:
-- Prediction: {label}
-- Risk Score: {risk_score}%
+{label} ({risk}% risk)
 
-Explain:
-1. Is it vulnerable?
-2. Why?
-3. Fix it
-4. Give corrected code
+User question:
+{message}
+
+Explain vulnerability, fix it, and give corrected code.
 """
 
         response = client.chat.completions.create(
@@ -66,18 +81,14 @@ Explain:
             messages=[{"role": "user", "content": prompt}]
         )
 
-        explanation = response.choices[0].message.content
-
         return jsonify({
-            "reply": explanation,
+            "reply": response.choices[0].message.content,
             "prediction": label,
-            "risk": risk_score
+            "risk": risk
         })
 
     except Exception as e:
-        return jsonify({"reply": f"Error: {str(e)}"})
-
+        return jsonify({"reply": str(e)})
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 10000))
-    app.run(host="0.0.0.0", port=port)
+    app.run(debug=True)
