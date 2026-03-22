@@ -3,28 +3,13 @@ function loadExample() {
         "SELECT * FROM users WHERE id = '" + " + user_input + '";
 }
 
+let latestData = null;
 
 async function scanCode() {
 
     const code = document.getElementById("codeInput").value;
 
-    if (!code) {
-        alert("Enter code first");
-        return;
-    }
-
-    // loader animation
-    let width = 0;
-    const bar = document.getElementById("loaderBar");
-    bar.style.width = "0%";
-
-    const interval = setInterval(() => {
-        if (width >= 100) clearInterval(interval);
-        else {
-            width++;
-            bar.style.width = width + "%";
-        }
-    }, 10);
+    document.getElementById("loader").innerText = "🤖 AI analyzing...";
 
     const res = await fetch("/scan", {
         method: "POST",
@@ -33,65 +18,41 @@ async function scanCode() {
     });
 
     const data = await res.json();
+    latestData = data;
 
-    // show result
+    document.getElementById("loader").innerText = "";
+
     document.getElementById("resultBox").style.display = "block";
-    document.getElementById("chartBox").style.display = "block";
 
-    document.getElementById("resultText").innerText =
-        data.result === "Vulnerable"
-            ? "⚠️ Vulnerability Detected"
-            : "✅ Code is Safe";
-
+    document.getElementById("resultText").innerText = data.result;
     document.getElementById("risk").innerText = data.risk;
     document.getElementById("confidence").innerText = data.confidence;
-    document.getElementById("codeOutput").innerText = data.code;
+
+    document.getElementById("highlighted").innerText = data.highlighted;
 
     // vulnerabilities
-    const vulnBox = document.getElementById("vulnBox");
     const vulnList = document.getElementById("vulnList");
-
     vulnList.innerHTML = "";
-
-    if (data.vulnerabilities.length > 0) {
-        vulnBox.style.display = "block";
-
-        data.vulnerabilities.forEach(v => {
-            const li = document.createElement("li");
-            li.innerText = `${v[0]} (Risk: ${v[1]}%)`;
-            vulnList.appendChild(li);
-        });
-
-    } else {
-        vulnBox.style.display = "none";
-    }
+    data.vulnerabilities.forEach(v => {
+        const li = document.createElement("li");
+        li.innerText = `${v[0]} (Line ${v[2]+1})`;
+        vulnList.appendChild(li);
+    });
 
     // fixes
-    const fixBox = document.getElementById("fixBox");
     const fixList = document.getElementById("fixList");
-
     fixList.innerHTML = "";
-
-    if (data.fixes.length > 0) {
-        fixBox.style.display = "block";
-
-        data.fixes.forEach(f => {
-            const li = document.createElement("li");
-            li.innerText = f;
-            fixList.appendChild(li);
-        });
-
-    } else {
-        fixBox.style.display = "none";
-    }
+    data.fixes.forEach(f => {
+        const li = document.createElement("li");
+        li.innerText = f;
+        fixList.appendChild(li);
+    });
 
     renderChart(data.risk, data.confidence);
 }
 
 
-// chart
 function renderChart(risk, confidence) {
-
     const ctx = document.getElementById('chart');
 
     if (window.myChart) window.myChart.destroy();
@@ -102,8 +63,25 @@ function renderChart(risk, confidence) {
             labels: ['Risk', 'Confidence'],
             datasets: [{
                 data: [risk, confidence],
-                backgroundColor: ['#ef4444', '#22c55e']
+                backgroundColor: ['red', 'green']
             }]
         }
     });
+}
+
+
+async function downloadReport() {
+    const res = await fetch("/download", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(latestData)
+    });
+
+    const blob = await res.blob();
+    const url = window.URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "report.pdf";
+    a.click();
 }
