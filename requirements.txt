@@ -1,11 +1,10 @@
 flask
 gunicorn
-openai
 numpy
 pandas
 joblib
 scikit-learn
-
+google-generativeai
 
 
 

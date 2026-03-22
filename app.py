@@ -1,7 +1,7 @@
 import os
 from flask import Flask, render_template, request, jsonify
 import joblib
-from openai import OpenAI
+import google.generativeai as genai
 
 app = Flask(__name__)
 
@@ -17,15 +17,16 @@ except Exception as e:
     model = None
     vectorizer = None
 
-# ---------- OPENAI ----------
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+# ---------- GEMINI SETUP ----------
+genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+ai_model = genai.GenerativeModel("gemini-1.5-flash")
 
 # ---------- HOME ----------
 @app.route("/")
 def home():
     return render_template("index.html")
 
-# ---------- SCAN (ML ONLY) ----------
+# ---------- SCAN ----------
 @app.route("/scan", methods=["POST"])
 def scan():
     data = request.json
@@ -44,7 +45,7 @@ def scan():
         "confidence": float(max(prob) * 100)
     })
 
-# ---------- CHAT (ML + GPT) ----------
+# ---------- CHAT (ML + GEMINI) ----------
 @app.route("/chat", methods=["POST"])
 def chat():
     data = request.json
@@ -52,7 +53,7 @@ def chat():
     message = data.get("message", "")
 
     try:
-        # ML
+        # ML Prediction
         X = vectorizer.transform([code])
         pred = model.predict(X)[0]
         prob = model.predict_proba(X)[0]
@@ -60,9 +61,9 @@ def chat():
         label = "Vulnerable" if pred == 1 else "Safe"
         risk = int(prob[1] * 100)
 
-        # GPT
+        # Prompt for Gemini
         prompt = f"""
-You are a cybersecurity AI.
+You are a cybersecurity expert AI.
 
 Code:
 {code}
@@ -73,22 +74,27 @@ ML Result:
 User question:
 {message}
 
-Explain vulnerability, fix it, and give corrected code.
+Explain:
+- Is it vulnerable?
+- Why?
+- Fix it
+- Give corrected code
 """
 
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[{"role": "user", "content": prompt}]
-        )
+        response = ai_model.generate_content(prompt)
+        reply = response.text
 
         return jsonify({
-            "reply": response.choices[0].message.content,
+            "reply": reply,
             "prediction": label,
             "risk": risk
         })
 
     except Exception as e:
-        return jsonify({"reply": str(e)})
+        return jsonify({
+            "reply": "⚠️ AI unavailable. Please try again later."
+        })
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)

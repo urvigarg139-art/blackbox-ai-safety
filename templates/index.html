@@ -3,11 +3,12 @@
 <head>
     <title>AI Security Assistant</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <style>
         body { background:#0f172a; color:white; font-family:sans-serif; }
         .container { width:90%; margin:auto; }
-        textarea { width:100%; height:120px; }
-        button { margin:5px; padding:10px; background:#00ffd5; border:none; }
+        textarea { width:100%; height:120px; background:#020617; color:white; }
+        button { margin:5px; padding:10px; background:#00ffd5; border:none; cursor:pointer; }
         #chatBox { height:250px; overflow:auto; background:#020617; padding:10px; }
         canvas { background:white; margin-top:20px; }
     </style>
@@ -27,7 +28,7 @@
 <div id="result"></div>
 
 <!-- GRAPH -->
-<canvas id="chart" width="400" height="200"></canvas>
+<canvas id="chart"></canvas>
 
 <!-- CHAT -->
 <h3>💬 Ask AI</h3>
@@ -41,13 +42,11 @@
 <script>
 let lastCode = "";
 
-// ---------- LOAD EXAMPLE ----------
 function loadExample() {
     const example = "SELECT * FROM users WHERE id = '" + "' + user_input + '";
     document.getElementById("codeInput").value = example;
 }
 
-// ---------- SCAN ----------
 async function scanCode() {
     const code = document.getElementById("codeInput").value;
     lastCode = code;
@@ -64,21 +63,18 @@ async function scanCode() {
         `<h3>${data.prediction == 1 ? "⚠️ Vulnerable" : "✅ Safe"}</h3>
          Risk: ${data.risk.toFixed(2)}%`;
 
-    // GRAPH
     new Chart(document.getElementById("chart"), {
         type: "bar",
         data: {
             labels: ["Risk", "Confidence"],
             datasets: [{
                 label: "Analysis",
-                data: [data.risk, data.confidence],
-                borderWidth: 1
+                data: [data.risk, data.confidence]
             }]
         }
     });
 }
 
-// ---------- CHAT ----------
 async function sendMessage() {
     const input = document.getElementById("userInput");
     const message = input.value;
