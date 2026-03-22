@@ -2,8 +2,6 @@
 <html>
 <head>
     <title>AI Security Assistant</title>
-
-    <!-- FIXED PATH -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 
@@ -13,20 +11,36 @@
 
     <h1 class="title">🤖 AI Security Assistant</h1>
 
-    <form action="/scan" method="POST">
+    <!-- INPUT -->
+    <textarea id="codeInput" placeholder="Paste your code here..."></textarea>
 
-        <textarea id="codeInput" name="code" placeholder="Paste your code here..." required></textarea>
+    <br><br>
 
-        <br><br>
+    <button onclick="loadExample()">Load Example</button>
+    <button onclick="scanCode()">Scan</button>
 
-        <button type="button" onclick="loadExample()">Load Example</button>
-        <button type="submit">Scan</button>
+    <!-- LOADING -->
+    <div id="loading" style="display:none; margin-top:20px;">
+        🤖 AI is analyzing your code...
+    </div>
 
-    </form>
+    <!-- RESULT -->
+    <div id="resultBox" class="card" style="display:none; margin-top:20px;">
+        <h2 id="resultText"></h2>
+
+        <p><b>Risk:</b> <span id="risk"></span>%</p>
+        <p><b>Confidence:</b> <span id="confidence"></span>%</p>
+
+        <pre id="codeOutput"></pre>
+
+        <div class="ai-box" id="suggestion"></div>
+
+        <canvas id="chart"></canvas>
+    </div>
 
 </div>
 
-<!-- FIXED PATH -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="{{ url_for('static', filename='js/app.js') }}"></script>
 
 </body>
