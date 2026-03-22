@@ -1,66 +1,38 @@
-<!DOCTYPE html>
-<html>
-<head>
-<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-</head>
+<div id="chatBox" style="height:400px; overflow:auto; background:#000; padding:10px; color:white;"></div>
 
-<body>
-
-<div class="container">
-
-<h1 class="glow">⚡ AI Vulnerability Scanner</h1>
-
-<div class="card">
-<form action="/scan" method="POST">
-<textarea name="code" placeholder="Paste your code..."></textarea><br><br>
-
-<button>Scan</button>
-<button type="button" onclick="loadExample()">Example</button>
-<!-- 🤖 CHATBOT SECTION (NEW) -->
-<div class="card" style="margin-top:30px;">
-
-<h2>🤖 AI Security Assistant</h2>
-
-<div id="chatArea" class="chat-area"></div>
-
-<input id="chatInput" placeholder="Ask about your code..." />
+<input type="text" id="userInput" placeholder="Paste your code here..." style="width:80%;">
 <button onclick="sendMessage()">Send</button>
 
-</div>
-</form>
-</div>
-
-</div>
-
 <script>
-function loadExample(){
-document.querySelector("textarea").value =
-"SELECT * FROM users WHERE username='admin' OR '1'='1'";
-}
-</script>
-<script>
-function sendMessage(){
-    const msg = document.getElementById("chatInput").value;
-    const code = document.querySelector("textarea").value;
+async function sendMessage() {
+    const input = document.getElementById("userInput");
+    const message = input.value;
 
-    const chat = document.getElementById("chatArea");
+    const chatBox = document.getElementById("chatBox");
 
-    chat.innerHTML += `<div class="user">👤 ${msg}</div>`;
+    // Show user message
+    chatBox.innerHTML += `<div>👤 ${message}</div>`;
 
-    fetch("/chat", {
+    const res = await fetch("/chat", {
         method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({message: msg, code: code})
-    })
-    .then(res => res.json())
-    .then(data => {
-        chat.innerHTML += `<div class="bot">🤖 ${data.reply}</div>`;
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ message: message })
     });
+
+    const data = await res.json();
+
+    // Show ML result
+    chatBox.innerHTML += `<div style="color:yellow;">⚠️ ${data.prediction} | Risk: ${data.risk}%</div>`;
+
+    // Show AI explanation
+    chatBox.innerHTML += `<div style="color:cyan;">🤖 ${data.reply}</div>`;
+
+    chatBox.scrollTop = chatBox.scrollHeight;
+    input.value = "";
 }
 </script>
-
-</body>
-</html>
 
 
 
