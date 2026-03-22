@@ -2,22 +2,30 @@
 <html>
 <head>
     <title>AI Security Assistant</title>
-    <link rel="stylesheet" href="/static/style.css">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
+
 <body>
 
-<h1>🤖 AI Security Assistant</h1>
+<div class="container">
 
-<form action="/scan" method="POST">
-    <textarea id="codeInput" name="code" placeholder="Paste your code here..." required></textarea>
+    <h1>🤖 AI Security Assistant</h1>
 
-    <br><br>
+    <form action="/scan" method="POST">
 
-    <button type="button" onclick="loadExample()">Load Example</button>
-    <button type="submit">Scan</button>
-</form>
+        <textarea id="codeInput" name="code" placeholder="Paste your code here..." required></textarea>
 
-<script src="/static/app.js"></script>
+        <div class="buttons">
+            <button type="button" onclick="loadExample()">Load Example</button>
+            <button type="submit">Scan</button>
+        </div>
+
+    </form>
+
+</div>
+
+<script src="{{ url_for('static', filename='app.js') }}"></script>
 
 </body>
 </html>

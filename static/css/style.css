@@ -2,20 +2,29 @@ body {
     background: #0f172a;
     color: white;
     font-family: Arial;
-    padding: 20px;
+}
+
+.container {
+    width: 80%;
+    margin: auto;
 }
 
 textarea {
-    width: 80%;
+    width: 100%;
     height: 150px;
     background: #020617;
     color: cyan;
     border: 1px solid cyan;
+    padding: 10px;
+}
+
+.buttons {
+    margin-top: 10px;
 }
 
 button {
     padding: 10px 20px;
-    margin: 5px;
+    margin-right: 10px;
     background: cyan;
     border: none;
     cursor: pointer;
@@ -27,7 +36,7 @@ button {
     margin: 10px 0;
 }
 
-.chat-container {
+.chat {
     margin-top: 20px;
 }
 
@@ -38,14 +47,10 @@ button {
     padding: 10px;
 }
 
-.user-msg {
+.user {
     color: violet;
 }
 
-.ai-msg {
+.ai {
     color: cyan;
-}
-
-.error {
-    color: red;
 }

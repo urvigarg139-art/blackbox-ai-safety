@@ -2,34 +2,40 @@
 <html>
 <head>
     <title>Dashboard</title>
-    <link rel="stylesheet" href="/static/style.css">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
+
 <body>
 
-<h1>📊 Analysis Dashboard</h1>
+<div class="container">
 
-<div class="card">
-    <h3>Result: {{ result }}</h3>
-    <p>Risk Score: {{ risk_score }}%</p>
-    <p>Confidence: {{ confidence }}%</p>
+    <h1>📊 Analysis Dashboard</h1>
+
+    <div class="card">
+        <h3>{{ result }}</h3>
+        <p>Risk: {{ risk }}%</p>
+        <p>Confidence: {{ confidence }}%</p>
+    </div>
+
+    <div class="card">
+        <h3>Code</h3>
+        <pre id="codeDisplay">{{ code }}</pre>
+    </div>
+
+    <!-- CHAT -->
+    <div class="chat">
+        <h3>💬 Ask AI</h3>
+
+        <div id="chatBox"></div>
+
+        <input id="chatInput" placeholder="Ask about your code..." />
+        <button onclick="sendMessage()">Send</button>
+    </div>
+
 </div>
 
-<div class="card">
-    <h3>Code</h3>
-    <pre id="codeInput">{{ code }}</pre>
-</div>
-
-<!-- CHAT -->
-<div class="chat-container">
-    <h3>💬 Ask AI</h3>
-
-    <div id="chatBox"></div>
-
-    <input id="chatInput" placeholder="Ask about your code..." />
-    <button onclick="sendMessage()">Send</button>
-</div>
-
-<script src="/static/app.js"></script>
+<script src="{{ url_for('static', filename='app.js') }}"></script>
 
 </body>
 </html>
