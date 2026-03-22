@@ -9,21 +9,21 @@
 
 <div class="main-container">
 
-    <h1 class="title">📊 Security Analysis</h1>
+    <h1 class="title">🚀 AI Security Analyzer</h1>
 
-    <!-- RESULT CARD -->
+    <!-- RESULT -->
     <div class="card {% if result == 'Vulnerable' %}vulnerable{% else %}safe{% endif %}">
-        <h2>
+        
+        <h2 class="typing">
             {% if result == "Vulnerable" %}
-                ⚠️ Vulnerable
+                ⚠️ Vulnerability Detected
             {% else %}
-                ✅ Safe
+                ✅ Code is Secure
             {% endif %}
         </h2>
 
-        <!-- CIRCULAR PROGRESS -->
-        <div style="display:flex; gap:40px; justify-content:center;">
-            
+        <div style="display:flex; justify-content:center; gap:50px; margin-top:20px;">
+
             <div>
                 <div class="progress-circle" style="--value: {{ risk }}%;">
                     {{ risk }}%
@@ -39,6 +39,7 @@
             </div>
 
         </div>
+
     </div>
 
     <!-- CODE -->
@@ -49,42 +50,35 @@
 
     <!-- GRAPH -->
     <div class="card">
-        <h3>📈 Analysis Graph</h3>
+        <h3>📊 Analysis</h3>
         <canvas id="chart"></canvas>
+    </div>
+
+    <!-- AI SUGGESTION (FAKE BUT SMART 😎) -->
+    <div class="card">
+        <h3>🤖 AI Suggestions</h3>
+
+        {% if result == "Vulnerable" %}
+        <div class="ai-box">
+            🔴 Your code may be vulnerable to SQL Injection.<br><br>
+            ✅ Use parameterized queries instead of string concatenation.<br>
+            ✅ Validate user input properly.<br>
+            ✅ Avoid direct database string execution.
+        </div>
+        {% else %}
+        <div class="ai-box">
+            🟢 Your code looks secure.<br><br>
+            ✅ Good job using safe practices.<br>
+            ✅ Keep validating inputs and sanitizing data.
+        </div>
+        {% endif %}
+
     </div>
 
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<script>
-const ctx = document.getElementById('chart');
-
-new Chart(ctx, {
-    type: 'bar',
-    data: {
-        labels: ['Risk', 'Confidence'],
-        datasets: [{
-            label: 'Analysis',
-            data: [("{{ risk }}"), ("{{ confidence }}")],
-            backgroundColor: ['#ef4444', '#22c55e']
-        }]
-    },
-    options: {
-        plugins: {
-            legend: { labels: { color: "white" } }
-        },
-        scales: {
-            y: {
-                ticks: { color: "white" }
-            },
-            x: {
-                ticks: { color: "white" }
-            }
-        }
-    }
-});
-</script>
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
 
 </body>
 </html>
