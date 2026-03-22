@@ -7,48 +7,92 @@
 
 <body>
 
-<div class="app">
+<div class="layout">
 
-    <h1>🚀 AI Security Analyzer</h1>
+    <!-- 🔥 SIDEBAR -->
+    <div class="sidebar">
+        <h2>🛡 SecureAI</h2>
 
-    <!-- INPUT -->
-    <div class="card">
-        <textarea id="code" placeholder="Paste your code here..."></textarea>
-
-        <div class="buttons">
-            <button id="exampleBtn">Load Example</button>
-            <button id="scanBtn">Scan</button>
-        </div>
+        <ul>
+            <li>📊 Dashboard</li>
+            <li>🔍 Scan Code</li>
+            <li>⚠ Vulnerabilities</li>
+            <li>📁 History</li>
+            <li>📄 Reports</li>
+            <li>🤖 AI Suggestions</li>
+            <li>⚙ Settings</li>
+        </ul>
     </div>
 
-    <!-- LOADING -->
-    <div id="loading" class="hidden">🤖 AI is analyzing...</div>
+    <!-- 🔥 MAIN -->
+    <div class="main">
 
-    <!-- RESULT -->
-    <div id="result" class="hidden">
+        <h1>🚀 AI Security Analyzer</h1>
 
-        <div class="card">
-            <h2 id="label"></h2>
-            <p>Risk: <span id="risk"></span>%</p>
-            <p>Confidence: <span id="confidence"></span>%</p>
+        <!-- CODE PANEL -->
+        <div class="panel">
+            <h3>💻 Code Editor</h3>
+
+            <textarea id="code"></textarea>
+
+            <div class="actions">
+                <button onclick="loadExample()">Load Example</button>
+                <button onclick="scanCode()">Scan</button>
+            </div>
         </div>
 
-        <div class="card">
-            <h3>🧠 Reason</h3>
-            <p id="reason"></p>
+        <!-- LIVE STATUS -->
+        <div id="loading" class="loading hidden">
+            🤖 AI is scanning your code...
         </div>
 
-        <div class="card">
-            <h3>🛠 Fix</h3>
-            <pre id="fix"></pre>
+        <!-- RESULT AREA -->
+        <div id="result" class="hidden">
+
+            <div class="grid">
+
+                <div class="card">
+                    <h3>⚠ Status</h3>
+                    <p id="label"></p>
+                </div>
+
+                <div class="card">
+                    <h3>📉 Risk</h3>
+                    <p id="risk"></p>
+                </div>
+
+                <div class="card">
+                    <h3>🎯 Confidence</h3>
+                    <p id="confidence"></p>
+                </div>
+
+            </div>
+
+            <div class="panel">
+                <h3>🧠 Why vulnerable?</h3>
+                <p id="reason"></p>
+            </div>
+
+            <div class="panel">
+                <h3>🛠 Fix Suggestion</h3>
+                <pre id="fix"></pre>
+            </div>
+
+            <div class="panel">
+                <h3>📜 Scan Logs</h3>
+                <div class="logs">
+                    ✔ Input analyzed<br>
+                    ✔ Pattern matched<br>
+                    ✔ Vulnerability detected
+                </div>
+            </div>
+
         </div>
 
     </div>
 
 </div>
 
-<!-- IMPORTANT -->
 <script src="/static/js/app.js"></script>
-
 </body>
 </html>

@@ -1,50 +1,107 @@
 body {
     margin: 0;
-    font-family: Arial;
-    background: linear-gradient(135deg, #000428, #004e92);
+    font-family: 'Segoe UI';
+    background: #0a0f1f;
     color: white;
 }
 
-.app {
-    padding: 40px;
+/* LAYOUT */
+.layout {
+    display: flex;
 }
 
-h1 {
-    text-align: center;
+/* SIDEBAR */
+.sidebar {
+    width: 230px;
+    height: 100vh;
+    background: #111827;
+    padding: 20px;
+}
+
+.sidebar h2 {
     color: cyan;
 }
 
-.card {
-    background: rgba(255,255,255,0.08);
-    padding: 20px;
-    border-radius: 10px;
-    margin-top: 20px;
+.sidebar ul {
+    list-style: none;
+    padding: 0;
 }
 
+.sidebar li {
+    padding: 12px;
+    margin: 8px 0;
+    background: #1f2937;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.sidebar li:hover {
+    background: cyan;
+    color: black;
+}
+
+/* MAIN */
+.main {
+    flex: 1;
+    padding: 30px;
+}
+
+/* PANEL */
+.panel {
+    background: #1f2937;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+/* GRID */
+.grid {
+    display: flex;
+    gap: 20px;
+}
+
+/* CARDS */
+.card {
+    background: #111827;
+    padding: 20px;
+    border-radius: 10px;
+    flex: 1;
+}
+
+/* TEXTAREA */
 textarea {
     width: 100%;
     height: 120px;
     background: black;
-    color: cyan;
+    color: lime;
     padding: 10px;
 }
 
-.buttons {
+/* BUTTONS */
+.actions button {
     margin-top: 10px;
-}
-
-button {
-    padding: 10px 20px;
     margin-right: 10px;
-    border: none;
+    padding: 10px;
     background: cyan;
-    color: black;
+    border: none;
     cursor: pointer;
-    border-radius: 6px;
 }
 
-button:hover {
+.actions button:hover {
     background: #00ffff;
+}
+
+/* LOADING */
+.loading {
+    padding: 10px;
+    background: orange;
+    margin-bottom: 20px;
+}
+
+/* LOGS */
+.logs {
+    font-family: monospace;
+    color: lightgreen;
 }
 
 .hidden {
