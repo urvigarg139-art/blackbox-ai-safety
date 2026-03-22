@@ -1,98 +1,51 @@
 body {
-    margin: 0;
-    font-family: 'Poppins', sans-serif;
-    background: linear-gradient(135deg, #020617, #0f172a);
-    color: #00ffcc;
-}
-
-/* Hero */
-.hero {
-    text-align: center;
-    padding: 100px 20px;
-}
-
-.glow {
-    animation: glow 1.5s infinite alternate;
-}
-
-@keyframes glow {
-    from { text-shadow: 0 0 10px #00ffcc; }
-    to { text-shadow: 0 0 25px #00ffcc; }
-}
-
-.btn {
-    padding: 12px 25px;
-    background: #00ffcc;
-    color: black;
-    text-decoration: none;
-    margin: 10px;
-    border-radius: 8px;
-}
-
-/* Cards */
-.container {
-    max-width: 1100px;
-    margin: auto;
+    background: #0f172a;
+    color: white;
+    font-family: Arial;
     padding: 20px;
-}
-
-.card {
-    background: rgba(255,255,255,0.05);
-    backdrop-filter: blur(15px);
-    border-radius: 15px;
-    padding: 20px;
-    margin: 20px 0;
 }
 
 textarea {
-    width: 100%;
-    height: 200px;
-    background: black;
-    color: #00ffcc;
-    border: 1px solid #00ffcc;
+    width: 80%;
+    height: 150px;
+    background: #020617;
+    color: cyan;
+    border: 1px solid cyan;
 }
 
 button {
-    background: #00ffcc;
-    padding: 10px;
+    padding: 10px 20px;
+    margin: 5px;
+    background: cyan;
     border: none;
+    cursor: pointer;
 }
 
-/* Grid */
-.grid {
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-    justify-content: center;
+.card {
+    background: #1e293b;
+    padding: 15px;
+    margin: 10px 0;
 }
 
-.chart-box {
-    width: 300px;
+.chat-container {
+    margin-top: 20px;
 }
-/* CHATBOT */
-.chat-area {
-    height: 250px;
+
+#chatBox {
+    height: 200px;
     overflow-y: auto;
     background: #020617;
     padding: 10px;
-    border: 1px solid #00ffcc;
-    margin-bottom: 10px;
 }
 
-.user {
-    text-align: right;
-    margin: 5px;
-    color: #00ffcc;
+.user-msg {
+    color: violet;
 }
 
-.bot {
-    text-align: left;
-    margin: 5px;
-    color: #ff004c;
+.ai-msg {
+    color: cyan;
 }
 
-input {
-    width: 70%;
-    padding: 10px;
-    margin-right: 10px;
+.error {
+    color: red;
 }

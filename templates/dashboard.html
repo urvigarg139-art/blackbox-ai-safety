@@ -1,67 +1,35 @@
 <!DOCTYPE html>
 <html>
 <head>
-<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
 </head>
-
 <body>
 
-<div class="container">
-
-<h1 class="glow">📊 AI Security Dashboard</h1>
+<h1>📊 Analysis Dashboard</h1>
 
 <div class="card">
-    <h2>{{ result }}</h2>
-    <p>🔥 Risk: {{ risk_score }}%</p>
-    <p>📊 Confidence: {{ confidence }}%</p>
-    <p>🧠 {{ explanation }}</p>
-</div>
-
-<div class="grid">
-    <div class="card chart-box">
-        <canvas id="riskChart"></canvas>
-    </div>
-
-    <div class="card chart-box">
-        <canvas id="confidenceChart"></canvas>
-    </div>
+    <h3>Result: {{ result }}</h3>
+    <p>Risk Score: {{ risk_score }}%</p>
+    <p>Confidence: {{ confidence }}%</p>
 </div>
 
 <div class="card">
-<a href="/app">Scan Again</a> |
-<a href="/logout">Logout</a>
+    <h3>Code</h3>
+    <pre id="codeInput">{{ code }}</pre>
 </div>
 
+<!-- CHAT -->
+<div class="chat-container">
+    <h3>💬 Ask AI</h3>
+
+    <div id="chatBox"></div>
+
+    <input id="chatInput" placeholder="Ask about your code..." />
+    <button onclick="sendMessage()">Send</button>
 </div>
 
-<script>
-const risk = parseInt("{{ risk_score }}");
-const safe = 100 - risk;
-const confidence = parseInt("{{ confidence }}");
-
-new Chart(document.getElementById("riskChart"), {
-    type: 'doughnut',
-    data: {
-        labels: ['Risk','Safe'],
-        datasets: [{
-            data: [risk, safe],
-            backgroundColor: ['#ff004c','#00ffcc']
-        }]
-    }
-});
-
-new Chart(document.getElementById("confidenceChart"), {
-    type: 'bar',
-    data: {
-        labels: ['Confidence'],
-        datasets: [{
-            data: [confidence],
-            backgroundColor: '#00ffcc'
-        }]
-    }
-});
-</script>
+<script src="/static/app.js"></script>
 
 </body>
 </html>
