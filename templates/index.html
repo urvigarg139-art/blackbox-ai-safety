@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>AI Security Assistant</title>
+
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 
@@ -9,9 +10,8 @@
 
 <div class="main-container">
 
-    <h1 class="title">🤖 AI Security Assistant</h1>
+    <h1 class="title">🚀 AI Security Analyzer</h1>
 
-    <!-- INPUT -->
     <textarea id="codeInput" placeholder="Paste your code here..."></textarea>
 
     <br><br>
@@ -19,22 +19,33 @@
     <button onclick="loadExample()">Load Example</button>
     <button onclick="scanCode()">Scan</button>
 
-    <!-- LOADING -->
-    <div id="loading" style="display:none; margin-top:20px;">
-        🤖 AI is analyzing your code...
-    </div>
+    <!-- LOADER -->
+    <div id="loaderBar"></div>
 
     <!-- RESULT -->
-    <div id="resultBox" class="card" style="display:none; margin-top:20px;">
+    <div id="resultBox" class="card" style="display:none;">
         <h2 id="resultText"></h2>
 
         <p><b>Risk:</b> <span id="risk"></span>%</p>
         <p><b>Confidence:</b> <span id="confidence"></span>%</p>
 
         <pre id="codeOutput"></pre>
+    </div>
 
-        <div class="ai-box" id="suggestion"></div>
+    <!-- VULNERABILITIES -->
+    <div class="card" id="vulnBox" style="display:none;">
+        <h3>🚨 Detected Issues</h3>
+        <ul id="vulnList"></ul>
+    </div>
 
+    <!-- FIXES -->
+    <div class="card" id="fixBox" style="display:none;">
+        <h3>🛠 Suggested Fixes</h3>
+        <ul id="fixList"></ul>
+    </div>
+
+    <!-- GRAPH -->
+    <div class="card" id="chartBox" style="display:none;">
         <canvas id="chart"></canvas>
     </div>
 
