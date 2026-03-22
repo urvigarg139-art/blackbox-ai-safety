@@ -2,24 +2,31 @@ import os
 from flask import Flask, render_template, request, redirect, session, jsonify
 import sqlite3
 import joblib
-from openai import OpenAI
 
-# ---------- CONFIG ----------
+# ---------- APP ----------
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY", "fallback-secret")
 
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+# ---------- LOAD MODEL ----------
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-# ---------- LOAD ML SAFELY ----------
 try:
-    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-    model = joblib.load(os.path.join(BASE_DIR, "model.pkl"))
-    vectorizer = joblib.load(os.path.join(BASE_DIR, "vector.pkl"))
+    model_path = os.path.join(BASE_DIR, "model.pkl")
+    vector_path = os.path.join(BASE_DIR, "vector.pkl")
+
+    print("Loading model from:", model_path)
+    print("Loading vectorizer from:", vector_path)
+
+    model = joblib.load(model_path)
+    vectorizer = joblib.load(vector_path)
+
     print("✅ Model loaded successfully")
+
 except Exception as e:
     print("❌ Model loading failed:", e)
     model = None
     vectorizer = None
+
 
 # ---------- DB ----------
 def init_db():
@@ -31,8 +38,8 @@ def init_db():
 
 init_db()
 
-# ---------- ROUTES ----------
 
+# ---------- ROUTES ----------
 @app.route("/")
 def landing():
     return render_template("landing.html")
@@ -138,43 +145,6 @@ def api_scan():
         "risk_score": float(prob[1] * 100),
         "confidence": float(max(prob) * 100)
     })
-
-
-# ---------- CHAT ----------
-@app.route("/chat", methods=["POST"])
-def chat():
-    data = request.json
-    code = data.get("code", "")
-    message = data.get("message", "")
-
-    prompt = f"""
-You are a cybersecurity expert AI assistant.
-
-Code:
-{code}
-
-User question:
-{message}
-
-Respond clearly:
-- Is it vulnerable?
-- Why?
-- Fix it
-- Give corrected code
-"""
-
-    try:
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[{"role": "user", "content": prompt}]
-        )
-
-        return jsonify({
-            "reply": response.choices[0].message.content
-        })
-
-    except Exception as e:
-        return jsonify({"error": str(e)})
 
 
 # ---------- RUN ----------
