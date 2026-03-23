@@ -13,13 +13,6 @@ def analyze_code(code):
             "confidence": 91,
             "fix": "Use parameterized queries (prepared statements)"
         }
-    elif "eval(" in code:
-        return {
-            "label": "⚠️ Code Injection Risk",
-            "risk": 75,
-            "confidence": 88,
-            "fix": "Avoid eval(), use safe parsing methods"
-        }
     else:
         return {
             "label": "✅ Safe",
@@ -37,7 +30,6 @@ def scan():
     code = request.json.get("code", "")
     return jsonify(analyze_code(code))
 
-# PDF REPORT
 @app.route("/download", methods=["POST"])
 def download():
     data = request.json

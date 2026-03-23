@@ -1,9 +1,13 @@
 let lastResult = null;
+let scanHistory = JSON.parse(localStorage.getItem("history")) || [];
 
 document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("exampleBtn").onclick = loadExample;
     document.getElementById("scanBtn").onclick = scanCode;
     document.getElementById("downloadBtn").onclick = downloadReport;
+
+    document.getElementById("historyBtn").onclick = showHistory;
+    document.getElementById("scanTab").onclick = showScan;
 });
 
 function loadExample() {
@@ -14,6 +18,12 @@ function loadExample() {
 async function scanCode() {
 
     const code = document.getElementById("codeInput").value;
+
+    if (!code.trim()) {
+        alert("Enter code first");
+        return;
+    }
+
     const loader = document.getElementById("loader");
     const result = document.getElementById("result");
 
@@ -29,6 +39,10 @@ async function scanCode() {
     const data = await res.json();
     lastResult = data;
 
+    // Save history
+    scanHistory.unshift(data);
+    localStorage.setItem("history", JSON.stringify(scanHistory));
+
     loader.style.display = "none";
     result.style.display = "flex";
 
@@ -38,37 +52,6 @@ async function scanCode() {
     typeText("fix", data.fix);
 
     drawChart(data.risk, data.confidence);
-    // TAGS SYSTEM
-const tagsBox = document.getElementById("tagsBox");
-const tags = document.getElementById("tags");
-
-tags.innerHTML = "";
-
-if (data.label.includes("Vulnerable")) {
-    tagsBox.style.display = "block";
-
-    const tag = document.createElement("span");
-    tag.innerText = "SQL Injection";
-    tags.appendChild(tag);
-} else {
-    tagsBox.style.display = "block";
-
-    const tag = document.createElement("span");
-    tag.classList.add("safe-tag");
-    tag.innerText = "No Issues";
-    tags.appendChild(tag);
-}
-
-// RISK GLOW EFFECT
-const resultBox = document.getElementById("result");
-
-if (data.risk > 50) {
-    resultBox.classList.add("high-risk");
-    resultBox.classList.remove("low-risk");
-} else {
-    resultBox.classList.add("low-risk");
-    resultBox.classList.remove("high-risk");
-}
 }
 
 function typeText(id, text) {
@@ -115,4 +98,33 @@ async function downloadReport() {
     a.href = url;
     a.download = "report.pdf";
     a.click();
+}
+
+function showHistory() {
+    document.getElementById("historyPanel").style.display = "block";
+    document.getElementById("result").style.display = "none";
+
+    renderHistory();
+}
+
+function showScan() {
+    document.getElementById("historyPanel").style.display = "none";
+    document.getElementById("result").style.display = "flex";
+}
+
+function renderHistory() {
+    const list = document.getElementById("historyList");
+    list.innerHTML = "";
+
+    scanHistory.forEach((item, index) => {
+        const div = document.createElement("div");
+        div.className = "card";
+        div.innerHTML = `
+            <b>Scan ${index + 1}</b><br>
+            ${item.label}<br>
+            Risk: ${item.risk}%<br>
+            Confidence: ${item.confidence}%
+        `;
+        list.appendChild(div);
+    });
 }
