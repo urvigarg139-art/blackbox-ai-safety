@@ -7,6 +7,7 @@
 </head>
 
 <body>
+
 <div class="main-container">
 
     <!-- 🔹 SIDEBAR -->
@@ -16,17 +17,18 @@
 
         <!-- USER PROFILE -->
         <div class="user-profile">
-            <img src="/static/default-avatar.png" class="avatar" id="userAvatar">
-            <span id="username">Guest</span>
+            <img src="/static/default-avatar.png" class="avatar">
+            <span>{{ username }}</span>
         </div>
 
         <!-- MENU -->
         <div class="menu">
             <button onclick="showScan()">🧠 Scan</button>
             <button onclick="toggleHistory()">📊 History</button>
+            <a href="/logout"><button>🚪 Logout</button></a>
         </div>
 
-        <!-- HISTORY PANEL -->
+        <!-- HISTORY -->
         <div class="history-panel" id="historyPanel">
             <h3>History</h3>
             <div id="historyList"></div>
@@ -34,19 +36,23 @@
 
     </div>
 
-
     <!-- 🔹 MAIN CONTENT -->
-    <div class="main-content" id="mainContent">
+    <div class="main-content">
 
         <h1>🚀 AI Security Analyzer</h1>
 
-        <!-- YOUR EXISTING SCAN UI HERE -->
-        <textarea id="inputBox" placeholder="Paste code here..."></textarea>
-        <button onclick="sendMessage()">Analyze</button>
+        <!-- ANALYZER BOX -->
+        <div class="analyzer-box">
 
-    </div>
+            <textarea id="inputBox">SELECT * FROM users WHERE id = ' + user_input + '</textarea>
 
-</div>
+            <div class="buttons">
+                <button onclick="loadExample()">Load Example</button>
+                <button onclick="sendMessage()">Scan</button>
+                <button onclick="downloadReport()">Download Report</button>
+            </div>
+
+        </div>
 
         <!-- RESULT -->
         <div id="result" class="cards">
@@ -75,12 +81,6 @@
 
         <!-- CHART -->
         <canvas id="chart"></canvas>
-
-        <!-- HISTORY PANEL -->
-        <div id="historyPanel" style="display:none;">
-            <h2>📊 Scan History</h2>
-            <div id="historyList"></div>
-        </div>
 
     </div>
 

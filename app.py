@@ -11,17 +11,21 @@ app.secret_key = "secret123"
 def init_db():
     conn = sqlite3.connect("users.db")
     c = conn.cursor()
+
+    # Users table
     c.execute("""
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            username TEXT,
+            username TEXT UNIQUE,
             password TEXT
         )
     """)
+
     conn.commit()
     conn.close()
 
 init_db()
+
 
 # ---------- ANALYSIS ----------
 def analyze_code(code):
@@ -39,6 +43,7 @@ def analyze_code(code):
         "fix": "No major issues"
     }
 
+
 # ---------- ROUTES ----------
 @app.route("/")
 def home():
@@ -46,52 +51,73 @@ def home():
         return redirect("/dashboard")
     return render_template("login.html")
 
+
 @app.route("/dashboard")
 def dashboard():
     if "user" not in session:
         return redirect("/")
-    return render_template("dashboard.html")
+    
+    return render_template("dashboard.html", username=session["user"])
+
 
 # ---------- AUTH ----------
 @app.route("/signup", methods=["POST"])
 def signup():
     data = request.form
+    username = data.get("username")
+    password = data.get("password")
+
     conn = sqlite3.connect("users.db")
     c = conn.cursor()
 
-    c.execute("INSERT INTO users (username, password) VALUES (?, ?)",
-              (data["username"], data["password"]))
-    conn.commit()
-    conn.close()
+    try:
+        c.execute("INSERT INTO users (username, password) VALUES (?, ?)",
+                  (username, password))
+        conn.commit()
+    except sqlite3.IntegrityError:
+        conn.close()
+        return "⚠️ Username already exists!"
 
+    conn.close()
     return redirect("/")
+
 
 @app.route("/login", methods=["POST"])
 def login():
     data = request.form
+    username = data.get("username")
+    password = data.get("password")
+
     conn = sqlite3.connect("users.db")
     c = conn.cursor()
 
     c.execute("SELECT * FROM users WHERE username=? AND password=?",
-              (data["username"], data["password"]))
+              (username, password))
     user = c.fetchone()
+
     conn.close()
 
     if user:
-        session["user"] = data["username"]
+        session["user"] = username
         return redirect("/dashboard")
-    return "Invalid credentials"
+
+    return "❌ Invalid credentials"
+
 
 @app.route("/logout")
 def logout():
     session.pop("user", None)
     return redirect("/")
 
+
 # ---------- SCAN ----------
 @app.route("/scan", methods=["POST"])
 def scan():
     code = request.json.get("code", "")
-    return jsonify(analyze_code(code))
+    result = analyze_code(code)
+
+    return jsonify(result)
+
 
 # ---------- DOWNLOAD ----------
 @app.route("/download", methods=["POST"])
@@ -115,5 +141,7 @@ def download():
 
     return send_file(buffer, as_attachment=True, download_name="report.pdf")
 
+
+# ---------- RUN ----------
 if __name__ == "__main__":
     app.run(debug=True)

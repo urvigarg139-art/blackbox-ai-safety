@@ -1,149 +1,31 @@
+let history = JSON.parse(localStorage.getItem("chatHistory")) || [];
 let lastResult = null;
-let scanHistory = JSON.parse(localStorage.getItem("history")) || [];
 
-document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById("exampleBtn").onclick = loadExample;
-    document.getElementById("scanBtn").onclick = scanCode;
-    document.getElementById("downloadBtn").onclick = downloadReport;
+// ================= SCAN =================
+function sendMessage() {
+    let code = document.getElementById("inputBox").value;
 
-    document.getElementById("historyBtn").onclick = showHistory;
-    document.getElementById("scanTab").onclick = showScan;
-});
-
-function loadExample() {
-    document.getElementById("codeInput").value =
-        "SELECT * FROM users WHERE id = ' + user_input + '";
-}
-
-async function scanCode() {
-
-    const code = document.getElementById("codeInput").value;
-
-    if (!code.trim()) {
-        alert("Enter code first");
-        return;
-    }
-
-    const loader = document.getElementById("loader");
-    const result = document.getElementById("result");
-
-    loader.style.display = "block";
-    result.style.display = "none";
-
-    const res = await fetch("/scan", {
+    fetch("/scan", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({code})
-    });
+        body: JSON.stringify({code: code})
+    })
+    .then(res => res.json())
+    .then(data => {
 
-    const data = await res.json();
-    lastResult = data;
+        lastResult = data;
 
-    // Save history
-    scanHistory.unshift(data);
-    localStorage.setItem("history", JSON.stringify(scanHistory));
+        document.getElementById("label").innerText = data.label;
+        document.getElementById("risk").innerText = data.risk + "%";
+        document.getElementById("confidence").innerText = data.confidence + "%";
+        document.getElementById("fix").innerText = data.fix;
 
-    loader.style.display = "none";
-    result.style.display = "flex";
-
-    typeText("label", data.label);
-    typeText("risk", "Risk: " + data.risk + "%");
-    typeText("confidence", "Confidence: " + data.confidence + "%");
-    typeText("fix", data.fix);
-
-    drawChart(data.risk, data.confidence);
-}
-
-function typeText(id, text) {
-    let i = 0;
-    const el = document.getElementById(id);
-    el.innerText = "";
-
-    const interval = setInterval(() => {
-        el.innerText += text[i];
-        i++;
-        if (i >= text.length) clearInterval(interval);
-    }, 15);
-}
-
-function drawChart(risk, confidence) {
-    new Chart(document.getElementById("chart"), {
-        type: "bar",
-        data: {
-            labels: ["Risk", "Confidence"],
-            datasets: [{
-                label: "Analysis",
-                data: [risk, confidence]
-            }]
-        }
+        addToHistory(code);
+        updateChart(data.risk);
     });
 }
-
-async function downloadReport() {
-    if (!lastResult) {
-        alert("Run scan first!");
-        return;
-    }
-
-    const res = await fetch("/download", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify(lastResult)
-    });
-
-    const blob = await res.blob();
-    const url = window.URL.createObjectURL(blob);
-
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "report.pdf";
-    a.click();
-}
-
-function showHistory() {
-    document.getElementById("historyPanel").style.display = "block";
-    document.getElementById("result").style.display = "none";
-
-    renderHistory();
-}
-
-function showScan() {
-    document.getElementById("historyPanel").style.display = "none";
-    document.getElementById("result").style.display = "flex";
-}
-
-function renderHistory() {
-    const list = document.getElementById("historyList");
-    list.innerHTML = "";
-
-    scanHistory.forEach((item, index) => {
-        const div = document.createElement("div");
-        div.className = "card";
-        div.innerHTML = `
-            <b>Scan ${index + 1}</b><br>
-            ${item.label}<br>
-            Risk: ${item.risk}%<br>
-            Confidence: ${item.confidence}%
-        `;
-        list.appendChild(div);
-    });
-}
-// ================= USER =================
-let user = {
-    name: "Urvi",
-    avatar: "/static/default-avatar.png"
-};
-
-document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById("username").innerText = user.name;
-    document.getElementById("userAvatar").src = user.avatar;
-    renderHistory();
-});
-
 
 // ================= HISTORY =================
-let history = JSON.parse(localStorage.getItem("chatHistory")) || [];
-
 function addToHistory(text) {
     history.unshift(text);
     localStorage.setItem("chatHistory", JSON.stringify(history));
@@ -152,8 +34,6 @@ function addToHistory(text) {
 
 function renderHistory() {
     let container = document.getElementById("historyList");
-    if (!container) return;
-
     container.innerHTML = "";
 
     history.forEach(item => {
@@ -169,34 +49,55 @@ function renderHistory() {
     });
 }
 
-
-// ================= TOGGLE HISTORY =================
 function toggleHistory() {
     let panel = document.getElementById("historyPanel");
 
-    if (panel.style.display === "block") {
-        panel.style.display = "none";
-    } else {
-        panel.style.display = "block";
-    }
+    panel.style.display = panel.style.display === "block" ? "none" : "block";
 }
 
-
-// ================= SCAN BUTTON =================
-function showScan() {
-    document.getElementById("historyPanel").style.display = "none";
+// ================= BUTTONS =================
+function loadExample() {
+    document.getElementById("inputBox").value =
+        "SELECT * FROM users WHERE id = ' + user_input + '";
 }
 
+function downloadReport() {
+    if (!lastResult) return alert("Run scan first!");
 
-// ================= SEND MESSAGE =================
-function sendMessage() {
-    let input = document.getElementById("inputBox").value;
-
-    if (!input) return;
-
-    addToHistory(input);
-
-    console.log("Analyzing:", input);
-
-    // Your existing backend call remains unchanged
+    fetch("/download", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(lastResult)
+    })
+    .then(res => res.blob())
+    .then(blob => {
+        let url = window.URL.createObjectURL(blob);
+        let a = document.createElement("a");
+        a.href = url;
+        a.download = "report.pdf";
+        a.click();
+    });
 }
+
+// ================= CHART =================
+let chart;
+
+function updateChart(risk) {
+    let ctx = document.getElementById("chart").getContext("2d");
+
+    if (chart) chart.destroy();
+
+    chart = new Chart(ctx, {
+        type: "bar",
+        data: {
+            labels: ["Risk Level"],
+            datasets: [{
+                label: "Risk %",
+                data: [risk]
+            }]
+        }
+    });
+}
+
+// INIT
+renderHistory();
