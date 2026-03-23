@@ -1,59 +1,116 @@
 body {
-    background: linear-gradient(135deg, #0a0f2c, #020617);
-    color: white;
+    margin: 0;
     font-family: 'Segoe UI', sans-serif;
-    text-align: center;
+    background: linear-gradient(135deg, #020617, #0a0f2c);
+    color: white;
 }
 
-.container {
-    margin-top: 50px;
+/* LAYOUT */
+.app {
+    display: flex;
 }
 
+/* SIDEBAR */
+.sidebar {
+    width: 220px;
+    height: 100vh;
+    background: #030712;
+    padding: 20px;
+    box-shadow: 0 0 20px rgba(0,255,255,0.2);
+}
+
+.sidebar h2 {
+    color: #00eaff;
+}
+
+.menu {
+    margin-top: 30px;
+}
+
+.menu-item {
+    padding: 12px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.menu-item:hover, .active {
+    background: rgba(0,255,255,0.2);
+}
+
+/* MAIN */
+.main {
+    flex: 1;
+    padding: 40px;
+}
+
+/* TITLE */
 h1 {
     color: #00eaff;
-    margin-bottom: 30px;
+    text-shadow: 0 0 10px #00eaff;
 }
 
+/* TEXTAREA */
 textarea {
-    width: 60%;
-    height: 150px;
-    background: #000;
+    width: 80%;
+    height: 140px;
+    background: black;
     color: #00eaff;
     border: 2px solid #00eaff;
-    padding: 10px;
     border-radius: 10px;
+    padding: 10px;
 }
 
+/* BUTTONS */
 .btn-group {
     margin-top: 20px;
 }
 
 button {
     padding: 12px 25px;
-    margin: 10px;
+    margin-right: 10px;
     border: none;
-    border-radius: 8px;
+    border-radius: 10px;
     background: linear-gradient(45deg, #00eaff, #0077ff);
-    color: black;
     font-weight: bold;
     cursor: pointer;
+    transition: 0.3s;
 }
 
 button:hover {
-    transform: scale(1.05);
+    transform: scale(1.1);
+    box-shadow: 0 0 15px #00eaff;
 }
 
+/* LOADER */
 .loader {
     display: none;
     margin-top: 20px;
     font-size: 18px;
     color: #00eaff;
+    animation: blink 1s infinite;
 }
 
-.result {
+@keyframes blink {
+    50% { opacity: 0.5; }
+}
+
+/* CARDS */
+.cards {
     display: none;
     margin-top: 30px;
-    background: #1e2a4a;
+    display: flex;
+    gap: 20px;
+}
+
+.card {
+    flex: 1;
+    background: #0f172a;
     padding: 20px;
-    border-radius: 12px;
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(0,255,255,0.2);
+}
+
+.card h3 {
+    color: #00eaff;
 }
