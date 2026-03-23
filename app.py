@@ -12,12 +12,25 @@ def init_db():
     conn = sqlite3.connect("users.db")
     c = conn.cursor()
 
-    # Users table
+    # USERS
     c.execute("""
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             username TEXT UNIQUE,
             password TEXT
+        )
+    """)
+
+    # HISTORY
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS history (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT,
+            code TEXT,
+            label TEXT,
+            risk INTEGER,
+            confidence INTEGER,
+            fix TEXT
         )
     """)
 
@@ -56,7 +69,6 @@ def home():
 def dashboard():
     if "user" not in session:
         return redirect("/")
-    
     return render_template("dashboard.html", username=session["user"])
 
 
@@ -64,19 +76,16 @@ def dashboard():
 @app.route("/signup", methods=["POST"])
 def signup():
     data = request.form
-    username = data.get("username")
-    password = data.get("password")
 
     conn = sqlite3.connect("users.db")
     c = conn.cursor()
 
     try:
         c.execute("INSERT INTO users (username, password) VALUES (?, ?)",
-                  (username, password))
+                  (data["username"], data["password"]))
         conn.commit()
-    except sqlite3.IntegrityError:
-        conn.close()
-        return "⚠️ Username already exists!"
+    except:
+        return "Username already exists!"
 
     conn.close()
     return redirect("/")
@@ -85,23 +94,21 @@ def signup():
 @app.route("/login", methods=["POST"])
 def login():
     data = request.form
-    username = data.get("username")
-    password = data.get("password")
 
     conn = sqlite3.connect("users.db")
     c = conn.cursor()
 
     c.execute("SELECT * FROM users WHERE username=? AND password=?",
-              (username, password))
+              (data["username"], data["password"]))
     user = c.fetchone()
 
     conn.close()
 
     if user:
-        session["user"] = username
+        session["user"] = data["username"]
         return redirect("/dashboard")
 
-    return "❌ Invalid credentials"
+    return "Invalid credentials"
 
 
 @app.route("/logout")
@@ -113,10 +120,52 @@ def logout():
 # ---------- SCAN ----------
 @app.route("/scan", methods=["POST"])
 def scan():
+    if "user" not in session:
+        return jsonify({"error": "Unauthorized"}), 401
+
     code = request.json.get("code", "")
     result = analyze_code(code)
 
+    conn = sqlite3.connect("users.db")
+    c = conn.cursor()
+
+    c.execute("""
+        INSERT INTO history (username, code, label, risk, confidence, fix)
+        VALUES (?, ?, ?, ?, ?, ?)
+    """, (
+        session["user"],
+        code,
+        result["label"],
+        result["risk"],
+        result["confidence"],
+        result["fix"]
+    ))
+
+    conn.commit()
+    conn.close()
+
     return jsonify(result)
+
+
+# ---------- GET HISTORY ----------
+@app.route("/get_history")
+def get_history():
+    if "user" not in session:
+        return jsonify([])
+
+    conn = sqlite3.connect("users.db")
+    c = conn.cursor()
+
+    c.execute("""
+        SELECT code FROM history
+        WHERE username=?
+        ORDER BY id DESC
+    """, (session["user"],))
+
+    data = c.fetchall()
+    conn.close()
+
+    return jsonify([row[0] for row in data])
 
 
 # ---------- DOWNLOAD ----------

@@ -1,7 +1,6 @@
-let history = JSON.parse(localStorage.getItem("chatHistory")) || [];
 let lastResult = null;
 
-// ================= SCAN =================
+// SCAN
 function sendMessage() {
     let code = document.getElementById("inputBox").value;
 
@@ -20,42 +19,39 @@ function sendMessage() {
         document.getElementById("confidence").innerText = data.confidence + "%";
         document.getElementById("fix").innerText = data.fix;
 
-        addToHistory(code);
+        renderHistory();
         updateChart(data.risk);
     });
 }
 
-// ================= HISTORY =================
-function addToHistory(text) {
-    history.unshift(text);
-    localStorage.setItem("chatHistory", JSON.stringify(history));
-    renderHistory();
-}
-
+// HISTORY (DB)
 function renderHistory() {
-    let container = document.getElementById("historyList");
-    container.innerHTML = "";
+    fetch("/get_history")
+    .then(res => res.json())
+    .then(data => {
+        let container = document.getElementById("historyList");
+        container.innerHTML = "";
 
-    history.forEach(item => {
-        let div = document.createElement("div");
-        div.className = "history-item";
-        div.innerText = item;
+        data.forEach(item => {
+            let div = document.createElement("div");
+            div.className = "history-item";
+            div.innerText = item;
 
-        div.onclick = () => {
-            document.getElementById("inputBox").value = item;
-        };
+            div.onclick = () => {
+                document.getElementById("inputBox").value = item;
+            };
 
-        container.appendChild(div);
+            container.appendChild(div);
+        });
     });
 }
 
 function toggleHistory() {
     let panel = document.getElementById("historyPanel");
-
     panel.style.display = panel.style.display === "block" ? "none" : "block";
 }
 
-// ================= BUTTONS =================
+// BUTTONS
 function loadExample() {
     document.getElementById("inputBox").value =
         "SELECT * FROM users WHERE id = ' + user_input + '";
@@ -79,9 +75,8 @@ function downloadReport() {
     });
 }
 
-// ================= CHART =================
+// CHART
 let chart;
-
 function updateChart(risk) {
     let ctx = document.getElementById("chart").getContext("2d");
 
@@ -90,7 +85,7 @@ function updateChart(risk) {
     chart = new Chart(ctx, {
         type: "bar",
         data: {
-            labels: ["Risk Level"],
+            labels: ["Risk"],
             datasets: [{
                 label: "Risk %",
                 data: [risk]
@@ -100,4 +95,4 @@ function updateChart(risk) {
 }
 
 // INIT
-renderHistory();
+document.addEventListener("DOMContentLoaded", renderHistory);

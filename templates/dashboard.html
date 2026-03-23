@@ -10,76 +10,49 @@
 
 <div class="main-container">
 
-    <!-- 🔹 SIDEBAR -->
+    <!-- SIDEBAR -->
     <div class="sidebar">
-
         <h2>⚡ BlackBox AI</h2>
 
-        <!-- USER PROFILE -->
         <div class="user-profile">
             <img src="/static/default-avatar.png" class="avatar">
             <span>{{ username }}</span>
         </div>
 
-        <!-- MENU -->
         <div class="menu">
             <button onclick="showScan()">🧠 Scan</button>
             <button onclick="toggleHistory()">📊 History</button>
             <a href="/logout"><button>🚪 Logout</button></a>
         </div>
 
-        <!-- HISTORY -->
         <div class="history-panel" id="historyPanel">
             <h3>History</h3>
             <div id="historyList"></div>
         </div>
-
     </div>
 
-    <!-- 🔹 MAIN CONTENT -->
+    <!-- MAIN -->
     <div class="main-content">
 
         <h1>🚀 AI Security Analyzer</h1>
 
-        <!-- ANALYZER BOX -->
         <div class="analyzer-box">
-
-            <textarea id="inputBox">SELECT * FROM users WHERE id = ' + user_input + '</textarea>
+            <textarea id="inputBox"></textarea>
 
             <div class="buttons">
                 <button onclick="loadExample()">Load Example</button>
                 <button onclick="sendMessage()">Scan</button>
                 <button onclick="downloadReport()">Download Report</button>
             </div>
-
         </div>
 
-        <!-- RESULT -->
         <div id="result" class="cards">
-
-            <div class="card">
-                <h3>Status</h3>
-                <p id="label"></p>
-            </div>
-
-            <div class="card">
-                <h3>Risk</h3>
-                <p id="risk"></p>
-            </div>
-
-            <div class="card">
-                <h3>Confidence</h3>
-                <p id="confidence"></p>
-            </div>
-
-            <div class="card">
-                <h3>Fix Suggestion</h3>
-                <p id="fix"></p>
-            </div>
-
+            <div class="card"><h3>Status</h3><p id="label"></p></div>
+            <div class="card"><h3>Risk</h3><p id="risk"></p></div>
+            <div class="card"><h3>Confidence</h3><p id="confidence"></p></div>
+            <div class="card"><h3>Fix</h3><p id="fix"></p></div>
         </div>
 
-        <!-- CHART -->
         <canvas id="chart"></canvas>
 
     </div>
