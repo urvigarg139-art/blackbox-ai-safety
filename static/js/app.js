@@ -130,8 +130,84 @@ function renderHistory() {
 
 // ================= BUTTONS =================
 function loadExample() {
-    document.getElementById("inputBox").value =
-        "SELECT * FROM users WHERE id = ' + user_input + '";
+    document.getElementById("inputBox").value = `
+// ================= INSECURE WEB APP EXAMPLE =================
+
+// Node.js + Express (Vulnerable Backend)
+
+const express = require("express");
+const app = express();
+const mysql = require("mysql");
+
+const db = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "",
+    database: "users_db"
+});
+
+// ❌ VULNERABLE LOGIN (SQL Injection)
+app.get("/login", (req, res) => {
+    const username = req.query.username;
+    const password = req.query.password;
+
+    const query = "SELECT * FROM users WHERE username = '" 
+        + username + "' AND password = '" + password + "'";
+
+    db.query(query, (err, result) => {
+        if (err) throw err;
+
+        if (result.length > 0) {
+            res.send("Login Successful");
+        } else {
+            res.send("Invalid Credentials");
+        }
+    });
+});
+
+
+// ❌ VULNERABLE SEARCH FUNCTION
+app.get("/search", (req, res) => {
+    const keyword = req.query.keyword;
+
+    const query = "SELECT * FROM products WHERE name LIKE '%" 
+        + keyword + "%'";
+
+    db.query(query, (err, result) => {
+        res.send(result);
+    });
+});
+
+
+// ❌ COMMAND INJECTION (VERY CRITICAL)
+const { exec } = require("child_process");
+
+app.get("/ping", (req, res) => {
+    const ip = req.query.ip;
+
+    exec("ping " + ip, (err, stdout) => {
+        res.send(stdout);
+    });
+});
+
+
+// ❌ XSS (Cross Site Scripting)
+app.get("/profile", (req, res) => {
+    const name = req.query.name;
+
+    res.send("<h1>Welcome " + name + "</h1>");
+});
+
+
+// ❌ HARD-CODED SECRET (BAD PRACTICE)
+const API_KEY = "123456SECRETKEY";
+
+
+// SERVER START
+app.listen(3000, () => {
+    console.log("Server running on port 3000");
+});
+`;
 }
 
 function downloadReport() {
