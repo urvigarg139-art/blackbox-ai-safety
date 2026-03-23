@@ -14,40 +14,60 @@ body {
     position: fixed;
     left: 0;
     top: 0;
-    padding: 20px;
+    padding: 25px 20px;
 
-    /* 🔥 CLEAR SEPARATION */
-    border-right: 2px solid rgba(0,255,255,0.2);
-    box-shadow: 4px 0 25px rgba(0,255,255,0.1);
+    border-right: 2px solid rgba(0,255,255,0.25);
+    box-shadow: 4px 0 25px rgba(0,255,255,0.12);
+
+    display: flex;
+    flex-direction: column;
 }
 
+/* Logo */
 .sidebar h2 {
     color: #22d3ee;
-    margin-bottom: 30px;
+    margin-bottom: 40px;
 }
 
-/* Sidebar buttons */
+/* Sidebar menu */
 .sidebar button {
-    display: block;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
     width: 100%;
-    margin: 10px 0;
-    padding: 12px;
+    padding: 14px;
+    margin-bottom: 15px;   /* 🔥 spacing FIX */
+
     background: transparent;
     border: none;
-    color: white;
+    color: #cbd5f5;
+
     text-align: left;
     cursor: pointer;
-    border-radius: 8px;
+    border-radius: 10px;
+
     transition: 0.3s;
 }
 
+/* Hover */
 .sidebar button:hover {
     background: rgba(0,255,255,0.1);
+    color: white;
 }
 
-/* Active button */
+/* Active */
 .sidebar button.active {
-    background: rgba(0,255,255,0.2);
+    background: linear-gradient(90deg, #06b6d4, #3b82f6);
+    color: white;
+}
+
+/* Divider line */
+.sidebar::after {
+    content: "";
+    margin-top: 20px;
+    height: 1px;
+    background: rgba(255,255,255,0.1);
 }
 
 /* ===== MAIN AREA ===== */
