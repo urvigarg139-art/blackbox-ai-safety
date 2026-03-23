@@ -1,25 +1,37 @@
-console.log("JS LOADED ✅");
+console.log("JS CONNECTED ✅");
 
-// Load example code
+// Wait until page fully loads
+document.addEventListener("DOMContentLoaded", () => {
+
+    const exampleBtn = document.getElementById("exampleBtn");
+    const scanBtn = document.getElementById("scanBtn");
+
+    exampleBtn.addEventListener("click", loadExample);
+    scanBtn.addEventListener("click", scanCode);
+
+});
+
+// Load example
 function loadExample() {
     document.getElementById("codeInput").value =
         "SELECT * FROM users WHERE id = ' + user_input + '";
 }
 
-// Scan function
+// Scan code
 async function scanCode() {
+
     const code = document.getElementById("codeInput").value;
 
     if (!code.trim()) {
-        alert("Please enter code");
+        alert("Enter some code first");
         return;
     }
 
-    // Show loading
-    document.getElementById("result").style.display = "block";
-    document.getElementById("label").innerText = "Analyzing...";
-    document.getElementById("risk").innerText = "";
-    document.getElementById("confidence").innerText = "";
+    const loader = document.getElementById("loader");
+    const resultBox = document.getElementById("result");
+
+    loader.style.display = "block";
+    resultBox.style.display = "none";
 
     try {
         const response = await fetch("/scan", {
@@ -32,12 +44,16 @@ async function scanCode() {
 
         const data = await response.json();
 
+        // Hide loader
+        loader.style.display = "none";
+        resultBox.style.display = "block";
+
         document.getElementById("label").innerText = data.label;
         document.getElementById("risk").innerText = "Risk: " + data.risk + "%";
         document.getElementById("confidence").innerText = "Confidence: " + data.confidence + "%";
 
-    } catch (error) {
-        console.error(error);
-        document.getElementById("label").innerText = "Error occurred ❌";
+    } catch (err) {
+        console.error(err);
+        loader.innerText = "❌ Error occurred";
     }
 }

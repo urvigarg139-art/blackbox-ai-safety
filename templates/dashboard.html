@@ -7,19 +7,25 @@
 
 <body>
 
-<h1>🚀 AI Security Analyzer</h1>
+<div class="container">
 
-<textarea id="codeInput" placeholder="Paste your code here..."></textarea>
+    <h1>🚀 AI Security Analyzer</h1>
 
-<br><br>
+    <textarea id="codeInput" placeholder="Paste your code here..."></textarea>
 
-<button onclick="loadExample()">Load Example</button>
-<button onclick="scanCode()">Scan</button>
+    <div class="btn-group">
+        <button id="exampleBtn">Load Example</button>
+        <button id="scanBtn">Scan</button>
+    </div>
 
-<div id="result" style="display:none;">
-    <h2 id="label"></h2>
-    <p id="risk"></p>
-    <p id="confidence"></p>
+    <div id="loader" class="loader">🤖 AI is analyzing...</div>
+
+    <div id="result" class="result">
+        <h2 id="label"></h2>
+        <p id="risk"></p>
+        <p id="confidence"></p>
+    </div>
+
 </div>
 
 <script src="/static/js/app.js"></script>

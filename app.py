@@ -2,22 +2,25 @@ from flask import Flask, render_template, request, jsonify
 
 app = Flask(__name__)
 
-# ----------- SIMPLE ANALYSIS LOGIC -----------
 def analyze_code(code):
     if "SELECT" in code and "+" in code:
         return {
             "label": "⚠️ Vulnerable (SQL Injection)",
-            "risk": 80,
-            "confidence": 90
+            "risk": 82,
+            "confidence": 91
+        }
+    elif "eval(" in code:
+        return {
+            "label": "⚠️ Dangerous (Code Injection)",
+            "risk": 75,
+            "confidence": 88
         }
     else:
         return {
             "label": "✅ Safe",
-            "risk": 10,
-            "confidence": 85
+            "risk": 12,
+            "confidence": 86
         }
-
-# ----------- ROUTES -----------
 
 @app.route("/")
 def home():
@@ -27,11 +30,8 @@ def home():
 def scan():
     data = request.get_json()
     code = data.get("code", "")
-
     result = analyze_code(code)
     return jsonify(result)
-
-# ----------- RUN -----------
 
 if __name__ == "__main__":
     app.run(debug=True)
