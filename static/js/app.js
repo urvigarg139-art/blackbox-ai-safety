@@ -33,7 +33,7 @@ function sendMessage() {
         }
 
         renderHistory();
-        updateChart(data.risk);
+        updateChart(data.risk, data.confidence);
     });
 }
 
@@ -107,21 +107,45 @@ function downloadReport() {
     });
 }
 
-// CHART
-let chart;
-function updateChart(risk) {
+function updateChart(risk, confidence) {
     let ctx = document.getElementById("chart").getContext("2d");
 
     if (chart) chart.destroy();
 
+    let safety = 100 - risk;
+
     chart = new Chart(ctx, {
         type: "bar",
         data: {
-            labels: ["Risk"],
+            labels: ["Risk", "Confidence", "Safety"],
             datasets: [{
-                label: "Risk %",
-                data: [risk]
+                label: "Analysis %",
+                data: [risk, confidence, safety],
+                backgroundColor: [
+                    "rgba(255, 0, 0, 0.7)",     // Risk 🔴
+                    "rgba(0, 200, 255, 0.7)",   // Confidence 🔵
+                    "rgba(0, 255, 100, 0.7)"    // Safety 🟢
+                ],
+                borderRadius: 10
             }]
+        },
+        options: {
+            plugins: {
+                legend: {
+                    labels: {
+                        color: "white"
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { color: "white" }
+                },
+                x: {
+                    ticks: { color: "white" }
+                }
+            }
         }
     });
 }
