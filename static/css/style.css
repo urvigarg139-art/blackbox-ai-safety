@@ -62,3 +62,30 @@ button {
     padding: 20px;
     border-radius: 10px;
 }
+.auth {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.auth-box {
+    background: #0f172a;
+    padding: 40px;
+    border-radius: 12px;
+    width: 300px;
+}
+
+.auth-box input {
+    width: 100%;
+    margin: 10px 0;
+    padding: 10px;
+}
+
+.logout-btn {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    color: cyan;
+    text-decoration: none;
+}
