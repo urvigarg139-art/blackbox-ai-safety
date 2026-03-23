@@ -21,7 +21,7 @@ function sendMessage() {
         document.getElementById("confidence").innerText = data.confidence + "%";
         document.getElementById("fix").innerText = data.fix;
 
-        // 🔥 Dynamic glow
+        // Dynamic glow
         let cards = document.querySelector(".cards");
 
         if (data.risk > 70) {
@@ -52,6 +52,13 @@ function renderHistory() {
 
             div.onclick = () => {
                 document.getElementById("inputBox").value = item;
+                sendMessage();
+
+                document.querySelectorAll(".history-item").forEach(el => {
+                    el.classList.remove("active");
+                });
+
+                div.classList.add("active");
             };
 
             container.appendChild(div);
@@ -59,9 +66,21 @@ function renderHistory() {
     });
 }
 
-function toggleHistory() {
-    let panel = document.getElementById("historyPanel");
-    panel.style.display = panel.style.display === "block" ? "none" : "block";
+// NEW SCAN
+function newScan() {
+    document.getElementById("inputBox").value = "";
+    document.getElementById("label").innerText = "";
+    document.getElementById("risk").innerText = "";
+    document.getElementById("confidence").innerText = "";
+    document.getElementById("fix").innerText = "";
+
+    document.querySelector(".cards").style.boxShadow = "none";
+}
+
+// CLEAR HISTORY
+function clearHistory() {
+    fetch("/clear_history", { method: "POST" })
+    .then(() => renderHistory());
 }
 
 // BUTTONS

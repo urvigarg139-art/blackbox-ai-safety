@@ -19,11 +19,13 @@
             <span>{{ username }}</span>
         </div>
 
-        <div class="menu">
-            <button onclick="showScan()">🧠 Scan</button>
-            <button onclick="toggleHistory()">📊 History</button>
-            <a href="/logout"><button>🚪 Logout</button></a>
-        </div>
+       <div class="menu">
+    <button onclick="newScan()">➕ New Scan</button>
+    <button onclick="showScan()">🧠 Scan</button>
+    <button onclick="toggleHistory()">📊 History</button>
+    <button onclick="clearHistory()">🗑 Clear</button>
+    <a href="/logout"><button>🚪 Logout</button></a>
+</div>
 
         <div class="history-panel" id="historyPanel">
             <h3>History</h3>

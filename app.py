@@ -12,7 +12,6 @@ def init_db():
     conn = sqlite3.connect("users.db")
     c = conn.cursor()
 
-    # USERS
     c.execute("""
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -21,7 +20,6 @@ def init_db():
         )
     """)
 
-    # HISTORY
     c.execute("""
         CREATE TABLE IF NOT EXISTS history (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -39,23 +37,21 @@ def init_db():
 
 init_db()
 
-
 # ---------- ANALYSIS ----------
 def analyze_code(code):
     if "SELECT" in code and "+" in code:
         return {
-            "label": "⚠️ SQL Injection Risk",
+            "label": "SQL Injection Risk",
             "risk": 82,
             "confidence": 91,
             "fix": "Use parameterized queries"
         }
     return {
-        "label": "✅ Safe",
+        "label": "Safe",
         "risk": 10,
         "confidence": 90,
         "fix": "No major issues"
     }
-
 
 # ---------- ROUTES ----------
 @app.route("/")
@@ -64,44 +60,35 @@ def home():
         return redirect("/dashboard")
     return render_template("login.html")
 
-
 @app.route("/dashboard")
 def dashboard():
     if "user" not in session:
         return redirect("/")
     return render_template("dashboard.html", username=session["user"])
 
-
 # ---------- AUTH ----------
 @app.route("/signup", methods=["POST"])
 def signup():
     data = request.form
-
     conn = sqlite3.connect("users.db")
     c = conn.cursor()
-
     try:
         c.execute("INSERT INTO users (username, password) VALUES (?, ?)",
                   (data["username"], data["password"]))
         conn.commit()
     except:
         return "Username already exists!"
-
     conn.close()
     return redirect("/")
-
 
 @app.route("/login", methods=["POST"])
 def login():
     data = request.form
-
     conn = sqlite3.connect("users.db")
     c = conn.cursor()
-
     c.execute("SELECT * FROM users WHERE username=? AND password=?",
               (data["username"], data["password"]))
     user = c.fetchone()
-
     conn.close()
 
     if user:
@@ -110,12 +97,10 @@ def login():
 
     return "Invalid credentials"
 
-
 @app.route("/logout")
 def logout():
     session.pop("user", None)
     return redirect("/")
-
 
 # ---------- SCAN ----------
 @app.route("/scan", methods=["POST"])
@@ -146,7 +131,6 @@ def scan():
 
     return jsonify(result)
 
-
 # ---------- GET HISTORY ----------
 @app.route("/get_history")
 def get_history():
@@ -167,6 +151,19 @@ def get_history():
 
     return jsonify([row[0] for row in data])
 
+# ---------- CLEAR HISTORY ----------
+@app.route("/clear_history", methods=["POST"])
+def clear_history():
+    if "user" not in session:
+        return "Unauthorized", 401
+
+    conn = sqlite3.connect("users.db")
+    c = conn.cursor()
+    c.execute("DELETE FROM history WHERE username=?", (session["user"],))
+    conn.commit()
+    conn.close()
+
+    return "Done"
 
 # ---------- DOWNLOAD ----------
 @app.route("/download", methods=["POST"])
@@ -190,7 +187,5 @@ def download():
 
     return send_file(buffer, as_attachment=True, download_name="report.pdf")
 
-
-# ---------- RUN ----------
 if __name__ == "__main__":
     app.run(debug=True)

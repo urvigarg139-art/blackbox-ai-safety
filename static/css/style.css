@@ -177,3 +177,7 @@ canvas {
         transform: translateY(0);
     }
 }
+.history-item.active {
+    background: #1e293b;
+    border-left: 3px solid #00f0ff;
+}
