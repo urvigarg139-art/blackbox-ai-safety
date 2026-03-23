@@ -128,3 +128,47 @@ function renderHistory() {
         list.appendChild(div);
     });
 }
+// ================= USER PROFILE =================
+let user = {
+    name: "Urvi",
+    avatar: "/static/default-avatar.png"
+};
+
+document.getElementById("username").innerText = user.name;
+document.getElementById("userAvatar").src = user.avatar;
+
+
+// ================= HISTORY =================
+let history = JSON.parse(localStorage.getItem("chatHistory")) || [];
+
+function addToHistory(text) {
+    history.unshift(text);
+    localStorage.setItem("chatHistory", JSON.stringify(history));
+    renderHistory();
+}
+
+function renderHistory() {
+    let container = document.getElementById("historyList");
+    if (!container) return;
+
+    container.innerHTML = "";
+
+    history.forEach(item => {
+        let div = document.createElement("div");
+        div.className = "history-item";
+        div.innerText = item;
+
+        div.onclick = () => {
+            loadChat(item);
+        };
+
+        container.appendChild(div);
+    });
+}
+
+function loadChat(text) {
+    console.log("Load:", text);
+}
+
+// Initial load
+renderHistory();

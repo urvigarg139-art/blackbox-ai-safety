@@ -209,3 +209,50 @@ button:hover {
     background: cyan;
     border-radius: 10px;
 }
+/* Sidebar separation line */
+.sidebar {
+    border-right: 2px solid #2a2a2a;
+}
+
+/* USER PROFILE */
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    border-bottom: 1px solid #333;
+}
+
+.avatar {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* HISTORY PANEL */
+.history-panel {
+    padding: 10px;
+    overflow-y: auto;
+    height: calc(100vh - 120px);
+}
+
+.history-panel h3 {
+    font-size: 14px;
+    color: #aaa;
+    margin-bottom: 10px;
+}
+
+/* WhatsApp-style history items */
+.history-item {
+    padding: 10px;
+    border-radius: 8px;
+    background: #1e1e1e;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.history-item:hover {
+    background: #2a2a2a;
+}
