@@ -37,21 +37,36 @@ def init_db():
 
 init_db()
 
-# ---------- ANALYSIS ----------
+
+# ---------- ANALYSIS (ADVANCED) ----------
 def analyze_code(code):
+    issues = []
+    fixed_code = code
+
     if "SELECT" in code and "+" in code:
-        return {
-            "label": "SQL Injection Risk",
-            "risk": 82,
-            "confidence": 91,
-            "fix": "Use parameterized queries"
-        }
+        issues.append("SQL Injection")
+        fixed_code = fixed_code.replace("+", ",")  # demo fix
+
+    if "<h1>" in code and "+" in code:
+        issues.append("XSS (Cross Site Scripting)")
+
+    if "exec(" in code:
+        issues.append("Command Injection")
+
+    if "SECRET" in code or "API_KEY" in code:
+        issues.append("Hardcoded Secret")
+
+    risk = min(100, 20 * len(issues) + 20)
+
     return {
-        "label": "Safe",
-        "risk": 10,
+        "label": ", ".join(issues) if issues else "Safe",
+        "risk": risk,
         "confidence": 90,
-        "fix": "No major issues"
+        "fix": "Use parameterized queries, sanitize inputs, avoid exec()",
+        "issues": issues,
+        "fixed_code": fixed_code
     }
+
 
 # ---------- ROUTES ----------
 @app.route("/")
@@ -60,11 +75,13 @@ def home():
         return redirect("/dashboard")
     return render_template("login.html")
 
+
 @app.route("/dashboard")
 def dashboard():
     if "user" not in session:
         return redirect("/")
     return render_template("dashboard.html", username=session["user"])
+
 
 # ---------- AUTH ----------
 @app.route("/signup", methods=["POST"])
@@ -72,20 +89,24 @@ def signup():
     data = request.form
     conn = sqlite3.connect("users.db")
     c = conn.cursor()
+
     try:
         c.execute("INSERT INTO users (username, password) VALUES (?, ?)",
                   (data["username"], data["password"]))
         conn.commit()
     except:
         return "Username already exists!"
+
     conn.close()
     return redirect("/")
+
 
 @app.route("/login", methods=["POST"])
 def login():
     data = request.form
     conn = sqlite3.connect("users.db")
     c = conn.cursor()
+
     c.execute("SELECT * FROM users WHERE username=? AND password=?",
               (data["username"], data["password"]))
     user = c.fetchone()
@@ -97,10 +118,12 @@ def login():
 
     return "Invalid credentials"
 
+
 @app.route("/logout")
 def logout():
     session.pop("user", None)
     return redirect("/")
+
 
 # ---------- SCAN ----------
 @app.route("/scan", methods=["POST"])
@@ -131,7 +154,8 @@ def scan():
 
     return jsonify(result)
 
-# ---------- GET HISTORY ----------
+
+# ---------- HISTORY ----------
 @app.route("/get_history")
 def get_history():
     if "user" not in session:
@@ -140,30 +164,27 @@ def get_history():
     conn = sqlite3.connect("users.db")
     c = conn.cursor()
 
-    c.execute("""
-        SELECT code FROM history
-        WHERE username=?
-        ORDER BY id DESC
-    """, (session["user"],))
+    c.execute("SELECT code FROM history WHERE username=? ORDER BY id DESC",
+              (session["user"],))
 
     data = c.fetchall()
     conn.close()
 
     return jsonify([row[0] for row in data])
 
-# ---------- CLEAR HISTORY ----------
+
 @app.route("/clear_history", methods=["POST"])
 def clear_history():
-    if "user" not in session:
-        return "Unauthorized", 401
-
     conn = sqlite3.connect("users.db")
     c = conn.cursor()
+
     c.execute("DELETE FROM history WHERE username=?", (session["user"],))
+
     conn.commit()
     conn.close()
 
-    return "Done"
+    return "done"
+
 
 # ---------- DOWNLOAD ----------
 @app.route("/download", methods=["POST"])
@@ -186,6 +207,7 @@ def download():
     buffer.seek(0)
 
     return send_file(buffer, as_attachment=True, download_name="report.pdf")
+
 
 if __name__ == "__main__":
     app.run(debug=True)

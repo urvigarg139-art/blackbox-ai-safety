@@ -181,3 +181,15 @@ canvas {
     background: #1e293b;
     border-left: 3px solid #00f0ff;
 }
+.fix-box {
+    margin-top: 25px;
+    padding: 20px;
+    background: #0f172a;
+    border-radius: 12px;
+    border-left: 4px solid #00ffcc;
+}
+
+.fix-box pre {
+    color: #00ffcc;
+    white-space: pre-wrap;
+}
