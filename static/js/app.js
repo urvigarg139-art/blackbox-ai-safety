@@ -14,17 +14,30 @@ function sendMessage() {
 
         lastResult = data;
 
-        document.getElementById("label").innerText = data.label;
+        document.getElementById("label").innerHTML =
+            data.risk > 70 ? "⚠️ " + data.label : "✅ " + data.label;
+
         document.getElementById("risk").innerText = data.risk + "%";
         document.getElementById("confidence").innerText = data.confidence + "%";
         document.getElementById("fix").innerText = data.fix;
+
+        // 🔥 Dynamic glow
+        let cards = document.querySelector(".cards");
+
+        if (data.risk > 70) {
+            cards.style.boxShadow = "0 0 25px red, 0 0 50px rgba(255,0,0,0.6)";
+        } else if (data.risk > 30) {
+            cards.style.boxShadow = "0 0 25px orange";
+        } else {
+            cards.style.boxShadow = "0 0 25px green";
+        }
 
         renderHistory();
         updateChart(data.risk);
     });
 }
 
-// HISTORY (DB)
+// HISTORY
 function renderHistory() {
     fetch("/get_history")
     .then(res => res.json())
