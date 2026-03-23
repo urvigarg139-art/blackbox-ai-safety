@@ -7,45 +7,46 @@
 </head>
 
 <body>
+<div class="main-container">
 
-<div class="app">
-
-    <!-- SIDEBAR -->
+    <!-- 🔹 SIDEBAR -->
     <div class="sidebar">
+
         <h2>⚡ BlackBox AI</h2>
 
-        <div class="menu">
-            <div class="menu-item active" id="scanTab">🧠 Scan</div>
-            <div class="menu-item" id="historyBtn">📊 History</div>
+        <!-- USER PROFILE -->
+        <div class="user-profile">
+            <img src="/static/default-avatar.png" class="avatar" id="userAvatar">
+            <span id="username">Guest</span>
         </div>
+
+        <!-- MENU -->
+        <div class="menu">
+            <button onclick="showScan()">🧠 Scan</button>
+            <button onclick="toggleHistory()">📊 History</button>
+        </div>
+
+        <!-- HISTORY PANEL -->
+        <div class="history-panel" id="historyPanel">
+            <h3>History</h3>
+            <div id="historyList"></div>
+        </div>
+
     </div>
-    <!-- 🔹 USER PROFILE -->
-<div class="user-profile">
-    <img src="/static/default-avatar.png" class="avatar" id="userAvatar">
-    <span id="username">Guest</span>
-</div>
 
-<!-- 🔹 HISTORY PANEL -->
-<div class="history-panel" id="historyPanel">
-    <h3>History</h3>
-    <div id="historyList"></div>
-</div>
 
-    <!-- MAIN -->
-    <div class="main">
+    <!-- 🔹 MAIN CONTENT -->
+    <div class="main-content" id="mainContent">
 
         <h1>🚀 AI Security Analyzer</h1>
 
-        <textarea id="codeInput"></textarea>
+        <!-- YOUR EXISTING SCAN UI HERE -->
+        <textarea id="inputBox" placeholder="Paste code here..."></textarea>
+        <button onclick="sendMessage()">Analyze</button>
 
-        <div class="btn-group">
-            <button id="exampleBtn">Load Example</button>
-            <button id="scanBtn">Scan</button>
-            <button id="downloadBtn">Download Report</button>
-            
-        </div>
+    </div>
 
-        <div id="loader">🤖 AI analyzing...</div>
+</div>
 
         <!-- RESULT -->
         <div id="result" class="cards">

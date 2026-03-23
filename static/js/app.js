@@ -128,14 +128,17 @@ function renderHistory() {
         list.appendChild(div);
     });
 }
-// ================= USER PROFILE =================
+// ================= USER =================
 let user = {
     name: "Urvi",
     avatar: "/static/default-avatar.png"
 };
 
-document.getElementById("username").innerText = user.name;
-document.getElementById("userAvatar").src = user.avatar;
+document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("username").innerText = user.name;
+    document.getElementById("userAvatar").src = user.avatar;
+    renderHistory();
+});
 
 
 // ================= HISTORY =================
@@ -159,16 +162,41 @@ function renderHistory() {
         div.innerText = item;
 
         div.onclick = () => {
-            loadChat(item);
+            document.getElementById("inputBox").value = item;
         };
 
         container.appendChild(div);
     });
 }
 
-function loadChat(text) {
-    console.log("Load:", text);
+
+// ================= TOGGLE HISTORY =================
+function toggleHistory() {
+    let panel = document.getElementById("historyPanel");
+
+    if (panel.style.display === "block") {
+        panel.style.display = "none";
+    } else {
+        panel.style.display = "block";
+    }
 }
 
-// Initial load
-renderHistory();
+
+// ================= SCAN BUTTON =================
+function showScan() {
+    document.getElementById("historyPanel").style.display = "none";
+}
+
+
+// ================= SEND MESSAGE =================
+function sendMessage() {
+    let input = document.getElementById("inputBox").value;
+
+    if (!input) return;
+
+    addToHistory(input);
+
+    console.log("Analyzing:", input);
+
+    // Your existing backend call remains unchanged
+}
