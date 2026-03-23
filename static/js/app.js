@@ -38,6 +38,37 @@ async function scanCode() {
     typeText("fix", data.fix);
 
     drawChart(data.risk, data.confidence);
+    // TAGS SYSTEM
+const tagsBox = document.getElementById("tagsBox");
+const tags = document.getElementById("tags");
+
+tags.innerHTML = "";
+
+if (data.label.includes("Vulnerable")) {
+    tagsBox.style.display = "block";
+
+    const tag = document.createElement("span");
+    tag.innerText = "SQL Injection";
+    tags.appendChild(tag);
+} else {
+    tagsBox.style.display = "block";
+
+    const tag = document.createElement("span");
+    tag.classList.add("safe-tag");
+    tag.innerText = "No Issues";
+    tags.appendChild(tag);
+}
+
+// RISK GLOW EFFECT
+const resultBox = document.getElementById("result");
+
+if (data.risk > 50) {
+    resultBox.classList.add("high-risk");
+    resultBox.classList.remove("low-risk");
+} else {
+    resultBox.classList.add("low-risk");
+    resultBox.classList.remove("high-risk");
+}
 }
 
 function typeText(id, text) {

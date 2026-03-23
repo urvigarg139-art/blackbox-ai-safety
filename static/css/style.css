@@ -114,3 +114,33 @@ button:hover {
 .card h3 {
     color: #00eaff;
 }
+/* TAGS */
+#tags span {
+    display: inline-block;
+    background: red;
+    padding: 6px 10px;
+    margin: 5px;
+    border-radius: 8px;
+}
+
+/* SAFE TAG */
+.safe-tag {
+    background: green !important;
+}
+
+/* RISK GLOW */
+.high-risk {
+    box-shadow: 0 0 20px red;
+}
+
+.low-risk {
+    box-shadow: 0 0 20px green;
+}
+
+/* PROGRESS BAR */
+.progress-bar {
+    width: 0%;
+    height: 5px;
+    background: cyan;
+    transition: width 0.5s;
+}
