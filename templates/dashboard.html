@@ -2,52 +2,27 @@
 <html>
 <head>
     <title>AI Security Analyzer</title>
-
-    <!-- FIXED PATHS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="/static/css/style.css">
 </head>
 
 <body>
 
-<div class="layout">
+<h1>🚀 AI Security Analyzer</h1>
 
-    <!-- SIDEBAR -->
-    <div class="sidebar">
-        <h2>🛡 SecureAI</h2>
-        <ul>
-            <li>Dashboard</li>
-            <li>Scan</li>
-            <li>History</li>
-            <li>Reports</li>
-        </ul>
-    </div>
+<textarea id="codeInput" placeholder="Paste your code here..."></textarea>
 
-    <!-- MAIN -->
-    <div class="main">
+<br><br>
 
-        <h1>🚀 AI Security Analyzer</h1>
+<button onclick="loadExample()">Load Example</button>
+<button onclick="scanCode()">Scan</button>
 
-        <textarea id="code"></textarea>
-
-        <br><br>
-
-        <button onclick="loadExample()">Load Example</button>
-        <button onclick="scanCode()">Scan</button>
-
-        <div id="loading" style="display:none;">Scanning...</div>
-
-        <div id="result" style="display:none;">
-            <h2 id="label"></h2>
-            <p id="risk"></p>
-            <p id="confidence"></p>
-        </div>
-
-    </div>
-
+<div id="result" style="display:none;">
+    <h2 id="label"></h2>
+    <p id="risk"></p>
+    <p id="confidence"></p>
 </div>
 
-<!-- FIXED JS PATH -->
-<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+<script src="/static/js/app.js"></script>
 
 </body>
 </html>
