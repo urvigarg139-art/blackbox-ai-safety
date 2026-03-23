@@ -1,25 +1,21 @@
 body {
     margin: 0;
-    font-family: 'Segoe UI';
+    font-family: Arial;
     background: #0a0f1f;
     color: white;
 }
 
-/* LAYOUT */
+/* FIXED LAYOUT */
 .layout {
     display: flex;
 }
 
 /* SIDEBAR */
 .sidebar {
-    width: 230px;
+    width: 250px;
     height: 100vh;
     background: #111827;
     padding: 20px;
-}
-
-.sidebar h2 {
-    color: cyan;
 }
 
 .sidebar ul {
@@ -28,16 +24,9 @@ body {
 }
 
 .sidebar li {
-    padding: 12px;
-    margin: 8px 0;
+    padding: 10px;
+    margin: 10px 0;
     background: #1f2937;
-    border-radius: 6px;
-    cursor: pointer;
-}
-
-.sidebar li:hover {
-    background: cyan;
-    color: black;
 }
 
 /* MAIN */
@@ -46,64 +35,8 @@ body {
     padding: 30px;
 }
 
-/* PANEL */
-.panel {
-    background: #1f2937;
-    padding: 20px;
-    border-radius: 10px;
-    margin-bottom: 20px;
-}
-
-/* GRID */
-.grid {
-    display: flex;
-    gap: 20px;
-}
-
-/* CARDS */
-.card {
-    background: #111827;
-    padding: 20px;
-    border-radius: 10px;
-    flex: 1;
-}
-
 /* TEXTAREA */
 textarea {
     width: 100%;
-    height: 120px;
-    background: black;
-    color: lime;
-    padding: 10px;
-}
-
-/* BUTTONS */
-.actions button {
-    margin-top: 10px;
-    margin-right: 10px;
-    padding: 10px;
-    background: cyan;
-    border: none;
-    cursor: pointer;
-}
-
-.actions button:hover {
-    background: #00ffff;
-}
-
-/* LOADING */
-.loading {
-    padding: 10px;
-    background: orange;
-    margin-bottom: 20px;
-}
-
-/* LOGS */
-.logs {
-    font-family: monospace;
-    color: lightgreen;
-}
-
-.hidden {
-    display: none;
+    height: 150px;
 }

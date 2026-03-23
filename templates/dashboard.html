@@ -2,97 +2,52 @@
 <html>
 <head>
     <title>AI Security Analyzer</title>
-    <link rel="stylesheet" href="/static/css/style.css">
+
+    <!-- FIXED PATHS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 
 <body>
 
 <div class="layout">
 
-    <!-- 🔥 SIDEBAR -->
+    <!-- SIDEBAR -->
     <div class="sidebar">
         <h2>🛡 SecureAI</h2>
-
         <ul>
-            <li>📊 Dashboard</li>
-            <li>🔍 Scan Code</li>
-            <li>⚠ Vulnerabilities</li>
-            <li>📁 History</li>
-            <li>📄 Reports</li>
-            <li>🤖 AI Suggestions</li>
-            <li>⚙ Settings</li>
+            <li>Dashboard</li>
+            <li>Scan</li>
+            <li>History</li>
+            <li>Reports</li>
         </ul>
     </div>
 
-    <!-- 🔥 MAIN -->
+    <!-- MAIN -->
     <div class="main">
 
         <h1>🚀 AI Security Analyzer</h1>
 
-        <!-- CODE PANEL -->
-        <div class="panel">
-            <h3>💻 Code Editor</h3>
+        <textarea id="code"></textarea>
 
-            <textarea id="code"></textarea>
+        <br><br>
 
-            <div class="actions">
-                <button onclick="loadExample()">Load Example</button>
-                <button onclick="scanCode()">Scan</button>
-            </div>
-        </div>
+        <button onclick="loadExample()">Load Example</button>
+        <button onclick="scanCode()">Scan</button>
 
-        <!-- LIVE STATUS -->
-        <div id="loading" class="loading hidden">
-            🤖 AI is scanning your code...
-        </div>
+        <div id="loading" style="display:none;">Scanning...</div>
 
-        <!-- RESULT AREA -->
-        <div id="result" class="hidden">
-
-            <div class="grid">
-
-                <div class="card">
-                    <h3>⚠ Status</h3>
-                    <p id="label"></p>
-                </div>
-
-                <div class="card">
-                    <h3>📉 Risk</h3>
-                    <p id="risk"></p>
-                </div>
-
-                <div class="card">
-                    <h3>🎯 Confidence</h3>
-                    <p id="confidence"></p>
-                </div>
-
-            </div>
-
-            <div class="panel">
-                <h3>🧠 Why vulnerable?</h3>
-                <p id="reason"></p>
-            </div>
-
-            <div class="panel">
-                <h3>🛠 Fix Suggestion</h3>
-                <pre id="fix"></pre>
-            </div>
-
-            <div class="panel">
-                <h3>📜 Scan Logs</h3>
-                <div class="logs">
-                    ✔ Input analyzed<br>
-                    ✔ Pattern matched<br>
-                    ✔ Vulnerability detected
-                </div>
-            </div>
-
+        <div id="result" style="display:none;">
+            <h2 id="label"></h2>
+            <p id="risk"></p>
+            <p id="confidence"></p>
         </div>
 
     </div>
 
 </div>
 
-<script src="/static/js/app.js"></script>
+<!-- FIXED JS PATH -->
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+
 </body>
 </html>
