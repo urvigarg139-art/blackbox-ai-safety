@@ -1,6 +1,7 @@
 let lastResult = null;
+let chart = null;
 
-// SCAN
+// ================= SCAN =================
 function sendMessage() {
     let code = document.getElementById("inputBox").value;
 
@@ -14,6 +15,7 @@ function sendMessage() {
 
         lastResult = data;
 
+        // TEXT OUTPUT
         document.getElementById("label").innerHTML =
             data.risk > 70 ? "⚠️ " + data.label : "✅ " + data.label;
 
@@ -21,7 +23,7 @@ function sendMessage() {
         document.getElementById("confidence").innerText = data.confidence + "%";
         document.getElementById("fix").innerText = data.fix;
 
-        // Dynamic glow
+        // 🔥 DYNAMIC GLOW
         let cards = document.querySelector(".cards");
 
         if (data.risk > 70) {
@@ -32,17 +34,76 @@ function sendMessage() {
             cards.style.boxShadow = "0 0 25px green";
         }
 
-        renderHistory();
+        // 🔥 GRAPH FIX (IMPORTANT)
         updateChart(data.risk, data.confidence);
+
+        renderHistory();
     });
 }
 
-// HISTORY
+
+// ================= GRAPH =================
+function updateChart(risk, confidence) {
+    let canvas = document.getElementById("chart");
+
+    if (!canvas) return;
+
+    let ctx = canvas.getContext("2d");
+
+    if (chart) {
+        chart.destroy();
+    }
+
+    let safety = 100 - risk;
+
+    chart = new Chart(ctx, {
+        type: "bar",
+        data: {
+            labels: ["Risk", "Confidence", "Safety"],
+            datasets: [{
+                label: "Analysis %",
+                data: [risk, confidence, safety],
+                backgroundColor: [
+                    "rgba(255, 0, 0, 0.7)",     // Risk
+                    "rgba(0, 200, 255, 0.7)",   // Confidence
+                    "rgba(0, 255, 100, 0.7)"    // Safety
+                ],
+                borderRadius: 10
+            }]
+        },
+        options: {
+            responsive: true,
+            animation: {
+                duration: 800
+            },
+            plugins: {
+                legend: {
+                    labels: { color: "white" }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { color: "white" }
+                },
+                x: {
+                    ticks: { color: "white" }
+                }
+            }
+        }
+    });
+}
+
+
+// ================= HISTORY =================
 function renderHistory() {
     fetch("/get_history")
     .then(res => res.json())
     .then(data => {
+
         let container = document.getElementById("historyList");
+        if (!container) return;
+
         container.innerHTML = "";
 
         data.forEach(item => {
@@ -66,24 +127,8 @@ function renderHistory() {
     });
 }
 
-// NEW SCAN
-function newScan() {
-    document.getElementById("inputBox").value = "";
-    document.getElementById("label").innerText = "";
-    document.getElementById("risk").innerText = "";
-    document.getElementById("confidence").innerText = "";
-    document.getElementById("fix").innerText = "";
 
-    document.querySelector(".cards").style.boxShadow = "none";
-}
-
-// CLEAR HISTORY
-function clearHistory() {
-    fetch("/clear_history", { method: "POST" })
-    .then(() => renderHistory());
-}
-
-// BUTTONS
+// ================= BUTTONS =================
 function loadExample() {
     document.getElementById("inputBox").value =
         "SELECT * FROM users WHERE id = ' + user_input + '";
@@ -107,48 +152,27 @@ function downloadReport() {
     });
 }
 
-function updateChart(risk, confidence) {
-    let ctx = document.getElementById("chart").getContext("2d");
-
-    if (chart) chart.destroy();
-
-    let safety = 100 - risk;
-
-    chart = new Chart(ctx, {
-        type: "bar",
-        data: {
-            labels: ["Risk", "Confidence", "Safety"],
-            datasets: [{
-                label: "Analysis %",
-                data: [risk, confidence, safety],
-                backgroundColor: [
-                    "rgba(255, 0, 0, 0.7)",     // Risk 🔴
-                    "rgba(0, 200, 255, 0.7)",   // Confidence 🔵
-                    "rgba(0, 255, 100, 0.7)"    // Safety 🟢
-                ],
-                borderRadius: 10
-            }]
-        },
-        options: {
-            plugins: {
-                legend: {
-                    labels: {
-                        color: "white"
-                    }
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: { color: "white" }
-                },
-                x: {
-                    ticks: { color: "white" }
-                }
-            }
-        }
-    });
+function toggleHistory() {
+    let panel = document.getElementById("historyPanel");
+    panel.style.display = panel.style.display === "block" ? "none" : "block";
 }
+
+function newScan() {
+    document.getElementById("inputBox").value = "";
+    document.getElementById("label").innerText = "";
+    document.getElementById("risk").innerText = "";
+    document.getElementById("confidence").innerText = "";
+    document.getElementById("fix").innerText = "";
+
+    let cards = document.querySelector(".cards");
+    if (cards) cards.style.boxShadow = "none";
+}
+
+function clearHistory() {
+    fetch("/clear_history", { method: "POST" })
+    .then(() => renderHistory());
+}
+
 
 // INIT
 document.addEventListener("DOMContentLoaded", renderHistory);
